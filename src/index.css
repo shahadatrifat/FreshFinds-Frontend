@@ -182,9 +182,24 @@
   }
 
   /* Custom Border Radius */
-  .rounded-gold {
+  .border-gold {
     border-radius: 12px;
     background-color: #ffd700;
+  }
+
+  .border-mint {
+    border-width: 2px;
+    background-color: #a8e6cf;
+  }
+
+  .border-beige {
+    border-width: 2px;
+    background-color: #f5f5dc;
+  }
+
+  .border-offwhite {
+    border-width: 2px;
+    background-color: #f8f8f8;
   }
 
   /* Custom Fonts or Typography */
