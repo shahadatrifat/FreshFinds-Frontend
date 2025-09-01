@@ -1,35 +1,35 @@
 import { Link, Outlet, useNavigate } from "react-router";
-import { ArrowLeft } from "lucide-react"; // Importing left arrow icon from Lucide React
-import bg1 from "../assets/bg-3.jpg"; // Background image
+import { ArrowLeft } from "lucide-react"; 
+import bg1 from "../assets/bg-3.jpg"; 
 import { motion } from "framer-motion";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "../components/ui/tooltip";
-import Logo from "../pages/shared/Logo/Logo"; // Assuming Logo is your custom component
+import Logo from "../pages/shared/Logo/Logo"; 
 
 const AuthLayout = () => {
-  const navigate = useNavigate(); // useNavigate for React Router v6
+  const navigate = useNavigate(); 
 
   const goBack = () => {
-    navigate(-1); // Go back to the previous page
+    navigate(-1);
   };
 
   return (
     <div
       className="min-h-screen bg-cover bg-center relative"
-      style={{ backgroundImage: `url(${bg1})` }} // Setting the background image
+      style={{ backgroundImage: `url(${bg1})` }} 
     >
       {/* Dark overlay to enhance text visibility */}
       <div className="absolute inset-0 bg-black opacity-10"></div>
-      <div className="relative z-10 flex flex-col justify-start min-h-screen px-4">
+      <div className="relative z-99 flex flex-col justify-start m px-4">
         {/* Flex container for logo and back button */}
-        <div className="flex items-center justify-between w-full py-2">
+        <div className="flex items-center justify-between w-full ">
           {/* Logo on the left side */}
-          <div className="ml-4">
+          <div className="ml-4 mb-2">
             <Link to="/">
-              <Logo className="w-24 h-24"/> {/* Logo with size */}
+              <Logo className="w-24 h-24" /> {/* Logo with size */}
             </Link>
           </div>
           {/* Back Button with Tooltip on the right */}
@@ -51,15 +51,14 @@ const AuthLayout = () => {
         </div>
 
         {/* Right-Aligned Content (Outlet) */}
-        <div className="flex justify-end items-start w-full px-6  ">
+        <div className="flex justify-end items-center w-full  px-8  ">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="w-full max-w-2xl"
+            transition={{ duration: 0.4 }}
+            className="w-full max-w-3xl"
           >
             {" "}
-            {/* Limit content width */}
             <Outlet />
           </motion.div>
         </div>
