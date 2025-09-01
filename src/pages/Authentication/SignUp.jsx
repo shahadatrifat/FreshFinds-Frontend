@@ -11,7 +11,7 @@ import {
   TextureCardTitle,
   TextureSeparator,
 } from "../../components/ui/texture-card";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import "../../index.css";
 import useAuth from "../../Hooks/useAuth";
 import GoogleLogin from "./SocialAuth/googleLogin";
@@ -21,20 +21,26 @@ const SignUp = () => {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
+    
+    reset,
   } = useForm();
   const [password, setPassword] = useState("");
   const [preview, setPreview] = useState("");
   const [file, setFile] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const { createUser } = useAuth();
+   const navigate = useNavigate();
+  const location = useLocation();
 
+  const from = location.state?.from?.pathname || "/";
   // Handle form submission
   const onSubmit = (data) => {
     console.log("Form submitted successfully", data, file);
     createUser(data.email, data.password)
       .then((res) => {
         console.log(res.user);
+        reset();
+        navigate(from, { replace: true });
       })
       .catch((err) => {
         console.log(err);

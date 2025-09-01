@@ -1,34 +1,35 @@
-import { NavLink } from "react-router"; // Correct import for NavLink
+import { NavLink } from "react-router";
 import { useState } from "react";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import Logo from "../Logo/Logo";
 import "../../../index.css";
-import { Menu } from "lucide-react";
-import { X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react"; 
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "../../../components/ui/tooltip";
+import useAuth from "../../../Hooks/useAuth";
+import clsx from "clsx";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, signOutUser } = useAuth();
 
-  // Define your navigation links here
   const navLinks = [
     { to: "/", label: "Home" },
     { to: "/products", label: "All Products" },
     { to: "/markets", label: "Markets" },
     { to: "/offers", label: "Offers" },
-    { to: "/signup", label: "Login/Signup" },
     { to: "/cart", label: "Cart" },
   ];
 
-  // Conditionally add more links (example: show Admin link if admin)
-  //   const isAdmin = true;
-  //   if (isAdmin) {
-  //     navLinks.push({ to: '/admin', label: 'Admin Dashboard' });
-  //   }
+  if (!user) {
+    navLinks.push({ to: "/signup", label: "Login/Signup" }); 
+  } else {
+    navLinks.push({ to: "/logout", label: "Logout", onClick: signOutUser }); 
+  }
 
   // Toggle mobile menu visibility
   const toggleMobileMenu = () => {
@@ -56,13 +57,18 @@ const Navbar = () => {
             <NavLink
               key={link.to}
               to={link.to}
+              onClick={link.onClick} // Ensure the logout works
               className={({ isActive }) =>
-                `font-semibold ${
-                  isActive ? "text-emerald" : "text-charcoal hover:text-emerald"
-                }`
+                clsx("font-lora transition-all duration-300 ease-in-out", {
+                  "text-emerald border-b-2 border-emerald-600": isActive,
+                  "text-charcoal hover:text-emerald border-b-2 border-transparent":
+                    !isActive,
+                })
               }
+              aria-current="page"
             >
               {link.label}
+              {link.label === "Logout" && <LogOut className="ml-2 inline" />} {/* Add LogOut Icon */}
             </NavLink>
           ))}
         </div>
@@ -97,10 +103,10 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       <motion.div
-        initial={{ opacity: 0, translateX: -20 }} // Start off from the left side
+        initial={{ opacity: 0, translateX: -20 }}
         animate={{
           opacity: isMobileMenuOpen ? 1 : 0,
-          translateX: isMobileMenuOpen ? 0 : -20, // Slide in/out horizontally
+          translateX: isMobileMenuOpen ? 0 : -20,
         }}
         transition={{ duration: 0.3 }}
         className={`md:hidden ${isMobileMenuOpen ? "block" : "hidden"}`}
@@ -110,6 +116,7 @@ const Navbar = () => {
             <NavLink
               key={link.to + link.label}
               to={link.to}
+              onClick={link.onClick} // Ensure logout works in mobile menu
               className={({ isActive }) =>
                 `block text-charcoal hover:text-emerald ${
                   isActive ? "text-emerald" : ""
@@ -117,6 +124,7 @@ const Navbar = () => {
               }
             >
               {link.label}
+              {link.label === "Logout" && <LogOut className="ml-2 inline" />} {/* Add LogOut Icon */}
             </NavLink>
           ))}
         </div>

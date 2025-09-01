@@ -20,6 +20,7 @@ const SignIn = () => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -34,6 +35,7 @@ const SignIn = () => {
     signInUser(data.email, data.password)
       .then((res) => {
         navigate(from, { replace: true });
+        reset();
         console.log(res.user);
       })
       .catch((err) => {

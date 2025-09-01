@@ -176,6 +176,10 @@
     border-color: #333333;
     border-width: 2px;
   }
+  .border-emerald {
+    border-color: #2e8b57;
+    border-width: 2px;
+  }
 
   /* Custom Border Radius */
   .rounded-gold {
