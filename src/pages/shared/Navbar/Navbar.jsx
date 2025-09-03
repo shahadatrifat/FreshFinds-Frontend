@@ -2,12 +2,10 @@ import { Link, NavLink } from "react-router";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Logo from "../Logo/Logo";
-import "../../../index.css";
-import { Menu, User } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { IoLogOutOutline } from "react-icons/io5";
-import { X } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -15,246 +13,206 @@ import {
 } from "../../../components/ui/tooltip";
 import useAuth from "../../../Hooks/useAuth";
 import clsx from "clsx";
+import useDropdown from "../../../Hooks/useDropdown";
 
 const Navbar = () => {
+  const { user, SignOutUser } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false); 
-  const userMenuRef = useRef(null); 
+  const firstNavLink = useRef(null);
 
-  const { user, signOutUser } = useAuth(); 
+  // User Dropdown using useDropdown
+  const {
+    isOpen: isUserMenuOpen,
+    toggle: toggleUserMenu,
+    menuRef: userMenuRef,
+    buttonRef: userButtonRef,
+    close: closeUserMenu,
+  } = useDropdown();
 
+  // Navigation Links
   const navLinks = [
     { to: "/", label: "Home" },
     { to: "/products", label: "All Products" },
     { to: "/markets", label: "Markets" },
     { to: "/offers", label: "Offers" },
-    { to: "/signup", label: "Login/Signup" },
     { to: "/cart", label: "Cart" },
-  ];
+    !user && { to: "/signup", label: "Login / Signup" },
+  ].filter(Boolean);
 
-  // Toggle mobile menu visibility
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen((prevState) => !prevState);
+  // Event Handlers
+  const handleSignout = () => {
+    SignOutUser();
+    closeUserMenu();
+    setIsMobileMenuOpen(false);
   };
 
-  // Toggle user menu visibility when clicking avatar
-  const toggleUserMenu = () => {
-    setIsUserMenuOpen((prevState) => !prevState);
-  };
+  const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
 
   useEffect(() => {
-    // Close user menu if clicked outside
-    const handleClickOutside = (e) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
-        setIsUserMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    if (isMobileMenuOpen && firstNavLink.current) firstNavLink.current.focus();
+  }, [isMobileMenuOpen]);
+
+  // Render User Menu
+  const renderUserMenu = () => (
+    <AnimatePresence>
+      {isUserMenuOpen && (
+        <motion.div
+          ref={userMenuRef}
+          role="menu"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+          className="absolute right-0 mt-2 w-60 bg-beige shadow-lg rounded-lg border border-offwhite z-50"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* User Info */}
+          <div className="p-4 border-b rounded-t-lg">
+            <div className="flex items-center gap-3">
+              <img
+                src={user?.photoURL || "https://i.ibb.co/4pDNDk1/avatar.png"}
+                alt="User Avatar"
+                className="w-10 h-10 rounded-full object-cover"
+              />
+              <div>
+                <p className="text-sm font-semibold">
+                  {user?.displayName || "No Name"}
+                </p>
+                <p className="text-xs text-charcoal">{user?.email}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Menu Items */}
+          <ul className="p-2 text-sm">
+            <li>
+              <Link
+                to="/profile"
+                onClick={closeUserMenu}
+                className="block px-4 py-2 flex items-center gap-2 hover:bg-gray-100 rounded"
+              >
+                <FaRegCircleUser className="text-emerald" size={20} />
+                My Profile
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/dashboard"
+                onClick={closeUserMenu}
+                className="block px-4 py-2 flex items-center gap-2 hover:bg-gray-100 rounded"
+              >
+                <RiDashboardHorizontalLine className="text-emerald" size={20} />
+                Dashboard
+              </Link>
+            </li>
+            <li>
+              <button
+                onClick={handleSignout}
+                className="w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-gray-100 rounded"
+              >
+                <IoLogOutOutline className="text-emerald" size={20} />
+                Logout
+              </button>
+            </li>
+          </ul>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 
   return (
     <motion.nav
       initial={{ opacity: 0, y: -50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-beige w-full sticky top-0 z-50 "
+      className="bg-beige w-full sticky top-0 z-50"
     >
-      <div className="mx-auto px-6  flex items-center justify-between">
-        
+      <div className="mx-auto px-6 flex items-center justify-between">
+        {/* Logo */}
         <div className="text-emerald text-3xl">
           <NavLink to="/">
             <Logo />
           </NavLink>
         </div>
 
-        {/* Desktop Navigation Links */}
+        {/* Desktop Nav */}
         <div className="hidden md:flex mt-3 items-center text-charcoal text-xl font-montserrat space-x-8">
-          {navLinks.map((link) => (
+          {navLinks.map((link, index) => (
             <NavLink
               key={link.to}
               to={link.to}
+              ref={index === 0 ? firstNavLink : null}
               className={({ isActive }) =>
                 clsx("font-lora transition-all duration-300 ease-in-out", {
-                  "text-emerald border-b-2 border-emerald": isActive,
+                  "text-emerald border-b-2 border-emerald-600": isActive,
                   "text-charcoal hover:text-emerald border-b-2 border-transparent":
                     !isActive,
                 })
               }
-              aria-current="page"
             >
               {link.label}
             </NavLink>
           ))}
-          {/* User Avatar */}
-          {user && (
-            <div className="relative" ref={userMenuRef}>
-              <button
-                onClick={toggleUserMenu} // Toggle user menu on avatar click
-                className="flex items-center gap-2 focus:outline-none"
-              >
-                {user.photoURL ? (
-                  <img
-                    src={user?.photoURL}
-                    alt="User Avatar"
-                    className="w-8 h-8 rounded-full object-cover border border-gray-300"
-                  />
-                ) : (
-                  <User className="w-6 h-6 text-charcoal" />
-                )}
-              </button>
-              <AnimatePresence>
-                {isUserMenuOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute right-0 mt-2 w-60 bg-white dark:bg-gray-900 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 z-50"
-                  >
-                    <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={
-                            user.photoURL ||
-                            "https://i.ibb.co/4pDNDk1/avatar.png"
-                          }
-                          alt="avatar"
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                        <div>
-                          <p className="text-sm font-semibold dark:text-white">
-                            {user.displayName || "No Name"}
-                          </p>
-                          <p className="text-xs text-gray-600 dark:text-gray-400">
-                            {user.email}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <ul className="p-2 text-sm dark:text-white">
-                      <li>
-                        <Link
-                          to="/profile"
-                          onClick={() => setIsUserMenuOpen(false)}
-                          className="block px-4 py-2 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded"
-                        >
-                          <FaRegCircleUser size={20} />
-                          My Profile
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to="/dashboard"
-                          onClick={() => setIsUserMenuOpen(false)}
-                          className="block px-4 py-2 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded"
-                        >
-                          <RiDashboardHorizontalLine size={20} /> Dashboard
-                        </Link>
-                      </li>
-                      <li>
-                        <button
-                          onClick={() => signOutUser()} // Call sign out on button click
-                          className="w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded"
-                        >
-                          <IoLogOutOutline size={20} /> Logout
-                        </button>
-                      </li>
-                    </ul>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          )}
+
+          {/* User Avatar / Default Icon */}
+          <div className="relative mb-1">
+            <button
+              ref={userButtonRef}
+              onClick={toggleUserMenu}
+              className="flex items-center gap-2 focus:outline-none"
+              aria-haspopup="true"
+              aria-expanded={isUserMenuOpen}
+            >
+              {user && user.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt="User Avatar"
+                  className="w-10 h-10 rounded-full object-cover border border-emerald"
+                />
+              ) : (
+                <FaRegCircleUser
+                  size={30}
+                  className=" rounded-full object-cover text-emerald"
+                />
+              )}
+            </button>
+            {renderUserMenu()}
+          </div>
         </div>
 
-        {/* Mobile Hamburger Menu */}
-        <div className="md:hidden flex  items-center space-x-4">
+        {/* Mobile Section */}
+        <div className="md:hidden flex items-center space-x-4">
+          {/* Avatar */}
           {user && (
-            <div className="relative mb-1" ref={userMenuRef}>
+            <div className="relative mb-1">
               <button
-                onClick={toggleUserMenu} 
+                ref={userButtonRef}
+                onClick={toggleUserMenu}
                 className="flex items-center gap-2 focus:outline-none"
+                aria-haspopup="true"
+                aria-expanded={isUserMenuOpen}
               >
                 {user.photoURL ? (
                   <img
-                    src={user?.photoURL}
+                    src={user.photoURL}
                     alt="User Avatar"
                     className="w-10 h-10 rounded-full object-cover border border-emerald"
                   />
                 ) : (
-                  <User className="w-10 h-10 text-charcoal" />
+                  <FaRegCircleUser className="w-10 h-10 rounded-full object-cover border border-emerald" />
                 )}
               </button>
-              <AnimatePresence>
-                {isUserMenuOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute right-0 mt-2 w-60 bg-beige dark:bg-gray-900 shadow-lg rounded-lg border border-offwhite z-50"
-                  >
-                    <div className="p-4 border-b  rounded-t-lg ">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={
-                            user.photoURL ||
-                            "https://i.ibb.co/4pDNDk1/avatar.png"
-                          }
-                          alt="avatar"
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                        <div>
-                          <p className="text-sm font-semibold ">
-                            {user.displayName || "No Name"}
-                          </p>
-                          <p className="text-xs text-charcoal ">
-                            {user.email}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <ul className="p-2 text-sm ">
-                      <li>
-                        <Link
-                          to="/profile"
-                          onClick={() => setIsUserMenuOpen(false)}
-                          className="block px-4 py-2 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded"
-                        >
-                          <FaRegCircleUser className="text-emerald" size={20} />
-                          My Profile
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to="/dashboard"
-                          onClick={() => setIsUserMenuOpen(false)}
-                          className="block px-4 py-2 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded"
-                        >
-                          <RiDashboardHorizontalLine className="text-emerald" size={20} /> Dashboard
-                        </Link>
-                      </li>
-                      <li>
-                        <button
-                          onClick={() => signOutUser()} // Call sign out on button click
-                          className="w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded"
-                        >
-                          <IoLogOutOutline className="text-emerald" size={20} /> Logout
-                        </button>
-                      </li>
-                    </ul>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {renderUserMenu()}
             </div>
           )}
+
+          {/* Hamburger */}
           <button
+            id="mobile-menu-button"
             className="text-charcoal hover:text-emerald"
-            onClick={toggleMobileMenu}
+            onClick={() => setIsMobileMenuOpen((prev) => !prev)}
             aria-label={isMobileMenuOpen ? "Close Menu" : "Open Menu"}
-            aria-expanded={isMobileMenuOpen ? "true" : "false"}
-            aria-controls="mobile-menu"
+            aria-expanded={isMobileMenuOpen}
           >
             {isMobileMenuOpen ? (
               <Tooltip>
@@ -277,31 +235,34 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       <motion.div
-        initial={{ opacity: 0, translateX: -20 }}
+        id="mobile-menu"
+        initial={{ opacity: 0, translateY: -20 }}
         animate={{
           opacity: isMobileMenuOpen ? 1 : 0,
-          translateX: isMobileMenuOpen ? 0 : -20,
+          translateY: isMobileMenuOpen ? 0 : -20,
         }}
-        transition={{ duration: 0.3 }}
-        className={`md:hidden ${isMobileMenuOpen ? "block" : "hidden"}`}
+        transition={{ duration: 0.5 }}
+        className={`md:hidden overflow-hidden transition-all duration-300 ${
+          isMobileMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+        }`}
       >
-        <div className="px-6 py-4 space-y-4">
-          {navLinks.map((link) => (
+        <div className="px-6 mt-4 py-4 space-y-4">
+          {navLinks.map((link, index) => (
             <NavLink
               key={link.to + link.label}
+              ref={index === 0 ? firstNavLink : null}
               to={link.to}
+              onClick={() => setIsMobileMenuOpen(false)}
               className={({ isActive }) =>
                 `block text-charcoal hover:text-emerald ${
-                  isActive ? "text-emerald" : ""
+                  isActive ? "text-emerald" : "text-charcoal"
                 }`
               }
             >
               {link.label}
             </NavLink>
           ))}
-          
         </div>
-        
       </motion.div>
     </motion.nav>
   );

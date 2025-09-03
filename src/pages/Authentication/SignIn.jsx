@@ -15,6 +15,7 @@ import { Link, useLocation, useNavigate } from "react-router";
 import useAuth from "../../Hooks/useAuth";
 import GoogleLogin from "./SocialAuth/googleLogin";
 
+
 const SignIn = () => {
   const {
     register,
