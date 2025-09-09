@@ -14,7 +14,7 @@ import {
 import { Link, useLocation, useNavigate } from "react-router";
 import useAuth from "../../Hooks/useAuth";
 import GoogleLogin from "./SocialAuth/googleLogin";
-
+import axiosInstance from "../../Hooks/useAxiosInstance";
 
 const SignIn = () => {
   const {
@@ -31,18 +31,32 @@ const SignIn = () => {
 
   const from = location.state?.from?.pathname || "/";
   // Handle form submission
-  const onSubmit = (data) => {
-    console.log("Form submitted successfully", data);
-    signInUser(data.email, data.password)
-      .then((res) => {
-        navigate(from, { replace: true });
-        reset();
-        console.log(res.user);
-      })
-      .catch((err) => {
-        console.log(err);
+  const onSubmit = async (data) => {
+    try {
+      console.log("Form submitted successfully", data);
+      const firebaseUser = await signInUser(data.email, data.password);
+      console.log("User signed in successfully", firebaseUser);
+      // id token
+      const idToken = await firebaseUser.user.getIdToken();
+      console.log("id token", idToken);
+      // send the response to the backend
+      const response = await axiosInstance.post("/api/v1/user/signin", {
+        userId: firebaseUser.user?.uid,
+        idToken,
+      },{
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        }
       });
+      console.log("User signed in successfully", response.data);
+      navigate(from, { replace: true });
+      reset();
+    } catch (err) {
+      console.log(err);
+      alert("There was an issue during sign-in. Please try again.");
+    }
 
+  
   };
 
   return (

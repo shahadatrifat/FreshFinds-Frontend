@@ -15,36 +15,76 @@ import { Link, useLocation, useNavigate } from "react-router";
 import "../../index.css";
 import useAuth from "../../Hooks/useAuth";
 import GoogleLogin from "./SocialAuth/googleLogin";
+import axiosInstance from "../../Hooks/useAxiosInstance";
+import CartLoaderFull from "../shared/loaders/CartLoaderFull";
+import CartLoader from "../shared/loaders/CartLoader";
 
 const SignUp = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-    
     reset,
   } = useForm();
   const [password, setPassword] = useState("");
   const [preview, setPreview] = useState("");
   const [file, setFile] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-  const { createUser } = useAuth();
-   const navigate = useNavigate();
+  const { createUser, loading, setLoading } = useAuth();
+  const navigate = useNavigate();
   const location = useLocation();
 
   const from = location.state?.from?.pathname || "/";
+
   // Handle form submission
-  const onSubmit = (data) => {
-    console.log("Form submitted successfully", data, file);
-    createUser(data.email, data.password)
-      .then((res) => {
-        console.log(res.user);
-        reset();
-        navigate(from, { replace: true });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  // Handle form submission
+  const onSubmit = async (data) => {
+    setLoading(true); // Enable loader when form is being submitted
+
+    try {
+      console.log("Form submitted successfully", data, file);
+
+      // Step 1: Create user in Firebase
+      const firebaseUser = await createUser(data.email, data.password);
+      console.log("firebaseUser created", firebaseUser);
+
+      // ✅ Step 2: Get Firebase ID token (this is the secure proof of authentication)
+      const idToken = await firebaseUser.user.getIdToken();
+      console.log("Firebase ID Token:", idToken);
+
+      // Step 3: Prepare FormData for backend (ONLY non-sensitive fields)
+      const displayName = `${data.firstName} ${data.lastName}`;
+      const formData = new FormData();
+      formData.append("displayName", displayName); // safe to send
+      if (file) {
+        formData.append("photoURL", file); // profile image if available
+      }
+
+      console.log("FormData before sending:", [...formData.entries()]);
+
+      // ✅ Step 4: Send request to backend with Firebase token in headers
+      const response = await axiosInstance.post(
+        "/api/v1/user/signup",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${idToken}`, // Secure header
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log("User registered successfully:", response.data);
+
+      // Step 5: Reset form and navigate after successful registration
+      reset();
+      navigate(from, { replace: true });
+    } catch (err) {
+      console.error("Error during sign-up:", err.response?.data || err.message);
+      alert("There was an issue during sign-up. Please try again.");
+    } finally {
+      setLoading(false); // Disable loader after the process
+    }
   };
 
   // Handle file change
@@ -59,7 +99,9 @@ const SignUp = () => {
       fileReader.readAsDataURL(selectedFile);
     }
   };
-
+  if (loading) {
+    return <CartLoader></CartLoader>;
+  }
   return (
     <div className="flex items-center  justify-center ">
       <div className="dark:bg-stone-950 h-full rounded-md max-w-3xl w-full">
@@ -77,7 +119,6 @@ const SignUp = () => {
                 <TextureCardContent>
                   <GoogleLogin></GoogleLogin>
                   <div className="text-center text-sm mb-2">or</div>
-
                   {/* Signup Form */}
                   <form
                     onSubmit={handleSubmit(onSubmit)}

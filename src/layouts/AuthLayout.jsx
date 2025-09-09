@@ -1,16 +1,16 @@
 import { Link, Outlet, useNavigate } from "react-router";
-import { ArrowLeft } from "lucide-react"; 
-import bg1 from "../assets/bg-3.jpg"; 
+import { ArrowLeft } from "lucide-react";
+import bg1 from "../assets/bg-3.jpg";
 import { motion } from "framer-motion";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "../components/ui/tooltip";
-import Logo from "../pages/shared/Logo/Logo"; 
+import Logo from "../pages/shared/Logo/Logo";
 
 const AuthLayout = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const goBack = () => {
     navigate(-1);
@@ -19,7 +19,7 @@ const AuthLayout = () => {
   return (
     <div
       className="min-h-screen bg-cover bg-center relative"
-      style={{ backgroundImage: `url(${bg1})` }} 
+      style={{ backgroundImage: `url(${bg1})` }}
     >
       {/* Dark overlay to enhance text visibility */}
       <div className="absolute inset-0 bg-black opacity-10"></div>
@@ -35,7 +35,7 @@ const AuthLayout = () => {
           {/* Back Button with Tooltip on the right */}
           <div className="mr-4">
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <button
                   onClick={goBack}
                   className="p-3 bg-emerald text-beige rounded-full shadow-lg hover:bg-emerald-700 transition duration-300"
