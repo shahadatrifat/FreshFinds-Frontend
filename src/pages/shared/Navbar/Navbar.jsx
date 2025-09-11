@@ -61,7 +61,7 @@ const Navbar = () => {
       initial={{ opacity: 0, y: -40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-beige w-full sticky top-0 z-50"
+      className="bg-emerald w-full sticky top-0 z-50"
     >
       <div className="mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
@@ -84,7 +84,7 @@ const Navbar = () => {
           <UserDropdown user={user} handleSignout={handleSignout} />
           <button
             id="mobile-menu-button"
-            className="text-charcoal hover:text-emerald"
+            className="text-charcoal hover:text-[#f5f5dc] transition duration-300 focus:outline-none focus:text-[#f5f5dc]"
             onClick={toggleMobileMenu}
             aria-label={isMobileMenuOpen ? "Close Menu" : "Open Menu"}
             aria-expanded={isMobileMenuOpen}

@@ -17,17 +17,18 @@ const NavLinksList = ({ navLinks = [], firstNavLink, onClick }) => (
           ref={index === 0 ? firstNavLink : null}
           className={({ isActive }) =>
             clsx("font-lora py-2 relative", {
-              "text-emerald": isActive,
-              "text-charcoal hover:text-emerald": !isActive,
+              "text-beige": isActive,
+              "text-charcoal ": !isActive,
             })
           }
+          
           aria-current={({ isActive }) => (isActive ? "page" : undefined)}
         >
           {({ isActive }) => (
             <motion.span
               layout
               className="inline-block border-b-2"
-              animate={{ borderColor: isActive ? "#2e8b57" : "transparent" }}
+              animate={{ borderColor: isActive ? "#f5f5dc" : "#2e8b57" }}
               transition={{ duration: 0.3 }}
             >
               {link.label}
