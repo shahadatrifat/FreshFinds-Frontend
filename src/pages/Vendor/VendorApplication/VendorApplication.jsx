@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router"; // For navigation after form submission
-import axiosInstance from "../../../Hooks/useAxiosInstance"; // Axios instance for API calls
+import { useNavigate } from "react-router";
 import { motion } from "framer-motion";
 
 import VendorApplicationForm from "./VendorApplicationForm";
@@ -9,7 +8,9 @@ import strawberries from "../../../assets/strawberries.jpg";
 import avocado from "../../../assets/avocado.jpg";
 import Container from "../../shared/Container";
 import useAuth from "../../../Hooks/useAuth";
-import axios from "axios";
+import axiosInstance from "../../../Hooks/useAxiosInstance";
+import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 
 const VendorApplication = () => {
   const {
@@ -19,7 +20,8 @@ const VendorApplication = () => {
     reset,
   } = useForm();
   const navigate = useNavigate();
-  const { setLoading, loading, user } = useAuth();
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState("");
   const [file, setFile] = useState(null);
   const handleFileChange = (e) => {
@@ -33,48 +35,53 @@ const VendorApplication = () => {
       fileReader.readAsDataURL(selectedFile);
     }
   };
+
   const onSubmit = async (data) => {
-    setLoading(true);
-    try {
-      // Prepare FormData
-      const formData = new FormData();
-      formData.append("businessName", data.businessName);
-      formData.append("marketLocation", data.marketLocation);
-      formData.append("marketDescription", data.marketDescription);
-      formData.append("vendorPhone", data.vendorPhone);
+  setLoading(true);
+  try {
+    // Prepare FormData
+    const formData = new FormData();
+    formData.append("businessName", data.businessName);
+    formData.append("marketLocation", data.marketLocation);
+    formData.append("marketDescription", data.marketDescription);
+    formData.append("vendorPhone", data.vendorPhone);
+    formData.append("uid", user.uid);
 
-      if (file) {
-        formData.append("coverPhoto", file); // This is your image file
-      }
-      // Send POST request
-      const idToken = await user.getIdToken();
-      console.log("id token", idToken);
-      const response = await axios.post(
-        "/api/v1/vendor/apply",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-             Authorization: `Bearer ${idToken}`, 
-
-          },
-        }
-      );
-
-      console.log("Vendor Application Submitted:", response);
-
-      reset();
-      navigate("/dashboard");
-      alert("Your vendor application has been submitted successfully!");
-    } catch (error) {
-      console.error("Error submitting application:", error);
-      alert(
-        "There was an error submitting your application. Please try again."
-      );
-    } finally {
-      setLoading(false);
+    if (file) {
+      formData.append("coverPhoto", file);
     }
-  };
+
+    // Send POST request
+    const idToken = await user.getIdToken();
+    console.log("id token", idToken);
+    const response = await axiosInstance.post(
+      "/api/v1/vendor/apply",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${idToken}`,
+        },
+      }
+    );
+
+    // Reset form and navigate after successful submission
+    reset();
+    navigate("/dashboard");
+
+    // Success notification using SweetAlert2
+    Swal.fire({
+      icon: "success",
+      title: "Application Submitted",
+      text: "Your vendor application has been submitted successfully!",
+    });
+  } catch (error) {
+    reset();
+    toast.error(error.response.data?.message);
+  } finally {
+    setLoading(false); 
+  }
+};
 
   return (
     <div className="relative w-full h-screen">

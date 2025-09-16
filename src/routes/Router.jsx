@@ -6,6 +6,8 @@ import AuthLayout from "../layouts/AuthLayout";
 import SignIn from "../pages/Authentication/SignIn";
 import SignUp from "../pages/Authentication/SignUp";
 import VendorApplication from "../pages/Vendor/VendorApplication/VendorApplication";
+import DashBoardLayout from "../layouts/DashBoardLayout";
+import VendorApplicationAction from "../pages/Vendor/VendorApplication/VendorApplicationAction";
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +47,20 @@ export const router = createBrowserRouter([
       {
         path:"/signup",
         element:<SignUp></SignUp>
+      }
+    ]
+  },
+  {
+    path:"/dashboard",
+    Component: DashBoardLayout,
+    children: [
+      {
+        index:true,
+        element:<h1>Dashboard</h1>
+      },
+      {
+        path:"/dashboard/admin/applications",
+        element:<VendorApplicationAction></VendorApplicationAction>
       }
     ]
   }

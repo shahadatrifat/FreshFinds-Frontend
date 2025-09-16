@@ -27,27 +27,27 @@ const Navbar = () => {
   ].filter(Boolean);
   const navigate = useNavigate();
   // Handlers
- const handleSignout = async () => {
-  try {
-    // Step 1: Call your Firebase signOut method
-    await SignOutUser(); // Firebase sign-out
+  const handleSignout = async () => {
+    try {
+      // Step 1: Call your Firebase signOut method
+      await SignOutUser(); // Firebase sign-out
 
-    // Step 2: Clear the cookies in the backend (via API)
-    const response = await axiosInstance.post("/api/v1/user/signout"); // Assuming you have a logout route on the backend
-    console.log("Cookie cleared successfully:", response.data);
-    // Step 3: Clear user state in the frontend (reset auth state)
-    setUser(null); // Clear user from context or state
+      // Step 2: Clear the cookies in the backend (via API)
+      const response = await axiosInstance.post("/api/v1/user/signout"); // Assuming you have a logout route on the backend
+      console.log("Cookie cleared successfully:", response.data);
+      // Step 3: Clear user state in the frontend (reset auth state)
+      setUser(null); // Clear user from context or state
 
-    // Step 4: Close the mobile menu if it's open
-    setIsMobileMenuOpen(false);
+      // Step 4: Close the mobile menu if it's open
+      setIsMobileMenuOpen(false);
 
-    // Step 5: Redirect to the login page
-    navigate("/signin"); // Redirect to the sign-in page after logout
-  } catch (error) {
-    console.error("Error logging out:", error);
-    alert("There was an issue logging out. Please try again.");
-  }
-};
+      // Step 5: Redirect to the login page
+      navigate("/signin"); // Redirect to the sign-in page after logout
+    } catch (error) {
+      console.error("Error logging out:", error);
+      alert("There was an issue logging out. Please try again.");
+    }
+  };
   const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
 
   useEffect(() => {

@@ -13,7 +13,7 @@ const CartLoaderFull = () => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-offwhite bg-opacity-90 z-[9999]">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/20 bg-opacity-90 z-[9999]">
       <div className="w-72 h-72">
         <Lottie options={options} height={256} width={256} />
       </div>

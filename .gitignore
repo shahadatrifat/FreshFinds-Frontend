@@ -53,3 +53,4 @@ Thumbs.db       # Windows
 
 # React Native
 .expo/
+src/components/Dashboard/SidebarLinks.js

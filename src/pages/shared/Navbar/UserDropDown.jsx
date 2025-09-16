@@ -25,7 +25,7 @@ const UserDropdown = ({ user, handleSignout }) => (
           <img
             src={user.photoURL}
             alt="User Avatar"
-            className="w-10  h-10 rounded-full object-cover border-2 border-beige hover:border-beige transition-all duration-300 ease-in-out hover:border-beige "
+            className="w-10 h-10 rounded-full object-cover !border-2 !border-beige hover:border-beige transition-all duration-300 ease-in-out hover:border-beige "
           />
         ) : (
           <FaRegCircleUser size={24} className="text-charcoal rounded-full" />
