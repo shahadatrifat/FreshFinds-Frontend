@@ -8,6 +8,7 @@ import SignUp from "../pages/Authentication/SignUp";
 import VendorApplication from "../pages/Vendor/VendorApplication/VendorApplication";
 import DashBoardLayout from "../layouts/DashBoardLayout";
 import VendorApplicationAction from "../pages/Vendor/VendorApplication/VendorApplicationAction";
+import AddProduct from "../pages/Vendor/Addproduct/AddProduct";
 
 export const router = createBrowserRouter([
   {
@@ -33,7 +34,8 @@ export const router = createBrowserRouter([
       {
         path:"/apply-vendor",
         element:<VendorApplication></VendorApplication>
-      }
+      },
+      
     ]
   },
   {
@@ -61,6 +63,10 @@ export const router = createBrowserRouter([
       {
         path:"/dashboard/admin/applications",
         element:<VendorApplicationAction></VendorApplicationAction>
+      },
+      {
+        path:"/dashboard/vendor/add-product",
+        element:<AddProduct></AddProduct>
       }
     ]
   }

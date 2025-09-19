@@ -37,51 +37,51 @@ const VendorApplication = () => {
   };
 
   const onSubmit = async (data) => {
-  setLoading(true);
-  try {
-    // Prepare FormData
-    const formData = new FormData();
-    formData.append("businessName", data.businessName);
-    formData.append("marketLocation", data.marketLocation);
-    formData.append("marketDescription", data.marketDescription);
-    formData.append("vendorPhone", data.vendorPhone);
-    formData.append("uid", user.uid);
+    setLoading(true);
+    try {
+      // Prepare FormData
+      const formData = new FormData();
+      formData.append("businessName", data.businessName);
+      formData.append("marketLocation", data.marketLocation);
+      formData.append("marketDescription", data.marketDescription);
+      formData.append("vendorPhone", data.vendorPhone);
+      formData.append("uid", user.uid);
 
-    if (file) {
-      formData.append("coverPhoto", file);
-    }
-
-    // Send POST request
-    const idToken = await user.getIdToken();
-    console.log("id token", idToken);
-    const response = await axiosInstance.post(
-      "/api/v1/vendor/apply",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${idToken}`,
-        },
+      if (file) {
+        formData.append("coverPhoto", file);
       }
-    );
 
-    // Reset form and navigate after successful submission
-    reset();
-    navigate("/dashboard");
+      // Send POST request
+      const idToken = await user.getIdToken();
+      console.log("id token", idToken);
+      const response = await axiosInstance.post(
+        "/api/v1/vendor/apply",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${idToken}`,
+          },
+        }
+      );
 
-    // Success notification using SweetAlert2
-    Swal.fire({
-      icon: "success",
-      title: "Application Submitted",
-      text: "Your vendor application has been submitted successfully!",
-    });
-  } catch (error) {
-    reset();
-    toast.error(error.response.data?.message);
-  } finally {
-    setLoading(false); 
-  }
-};
+      // Reset form and navigate after successful submission
+      reset();
+      navigate("/dashboard");
+
+      // Success notification using SweetAlert2
+      Swal.fire({
+        icon: "success",
+        title: "Application Submitted",
+        text: "Your vendor application has been submitted successfully!",
+      });
+    } catch (error) {
+      reset();
+      toast.error(error.response.data?.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="relative w-full h-screen">
