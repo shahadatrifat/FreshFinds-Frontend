@@ -1,4 +1,3 @@
-"use client";
 import React, { useState } from "react";
 import { useMediaQuery } from "../../Hooks/use-media-query";
 import { Button } from "./button";
@@ -13,7 +12,7 @@ import {
 import { Drawer, DrawerContent, DrawerTrigger } from "./drawer";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
-// Define your categories here
+// Define categories
 const categories = [
   { value: "meat", label: "Meat & Poultry" },
   { value: "vegetables", label: "Vegetables" },
@@ -37,25 +36,37 @@ const categories = [
   { value: "ready_meals", label: "Ready Meals" },
 ];
 
-
-export default function ComboBoxResponsive() {
+export default function ComboBoxResponsive({ value, onChange }) {
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(value || null);
+
+
+  const handleSelect = (category) => {
+    setSelectedCategory(category);
+    onChange?.(category); // Pass the selected category back to the parent
+    setOpen(false);
+  };
+
+  const TriggerButton = (
+    <Button
+      variant="outline"
+      className="w-full justify-start bg-[#f5f5dc] text-gray-900 hover:bg-[#e6e2b5] border border-gray-300"
+    >
+      {selectedCategory ? selectedCategory.label : "+ Set Category"}
+    </Button>
+  );
 
   if (isDesktop) {
     return (
-      <Popover open={open} onOpenChange={setOpen}>
+     <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button variant="outline" className="w-[150px] justify-start">
+          <Button variant="outline" className="w-[150px] justify-start bg-beige">
             {selectedCategory ? selectedCategory.label : "+ Set Category"}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0" align="start">
-          <CategoryList
-            setOpen={setOpen}
-            setSelectedCategory={setSelectedCategory}
-          />
+          <CategoryList handleSelect={handleSelect} />
         </PopoverContent>
       </Popover>
     );
@@ -64,23 +75,20 @@ export default function ComboBoxResponsive() {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button variant="outline" className="w-[150px] justify-start">
+        <Button variant="outline" className="w-[150px] justify-start bg-beige">
           {selectedCategory ? selectedCategory.label : "+ Set Category"}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <div className="mt-4 border-t">
-          <CategoryList
-            setOpen={setOpen}
-            setSelectedCategory={setSelectedCategory}
-          />
+          <CategoryList handleSelect={handleSelect} />
         </div>
       </DrawerContent>
     </Drawer>
   );
 }
 
-function CategoryList({ setOpen, setSelectedCategory }) {
+function CategoryList({ handleSelect }) {
   return (
     <Command>
       <CommandInput placeholder="Filter categories..." />
@@ -91,13 +99,7 @@ function CategoryList({ setOpen, setSelectedCategory }) {
             <CommandItem
               key={category.value}
               value={category.value}
-              onSelect={(value) => {
-                setSelectedCategory(
-                  categories.find((category) => category.value === value) ||
-                    null
-                );
-                setOpen(false);
-              }}
+              onSelect={() => handleSelect(category)}
             >
               {category.label}
             </CommandItem>

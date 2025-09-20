@@ -9,6 +9,7 @@ import VendorApplication from "../pages/Vendor/VendorApplication/VendorApplicati
 import DashBoardLayout from "../layouts/DashBoardLayout";
 import VendorApplicationAction from "../pages/Vendor/VendorApplication/VendorApplicationAction";
 import AddProduct from "../pages/Vendor/Addproduct/AddProduct";
+import PendingProduct from "../pages/Admin/PendingProduct/PendingProduct";
 
 export const router = createBrowserRouter([
   {
@@ -63,6 +64,10 @@ export const router = createBrowserRouter([
       {
         path:"/dashboard/admin/applications",
         element:<VendorApplicationAction></VendorApplicationAction>
+      },
+      {
+        path:"/dashboard/admin/pending-products",
+        element:<PendingProduct></PendingProduct>
       },
       {
         path:"/dashboard/vendor/add-product",
