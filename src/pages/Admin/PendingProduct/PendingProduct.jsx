@@ -25,22 +25,16 @@ const PendingProduct = () => {
     refetchInterval: 5000,
   });
 
-  // Single mutation for approve/reject
   const { mutate: handleProductAction } = useMutation({
     mutationFn: ({ productId, action }) => {
-      console.log(
-        "Sending PUT request to:",
-        `/api/v1/product/${action}/${productId}`
-      );
       return axiosInstance
         .put(`/api/v1/product/${action}/${productId}`)
         .then((res) => {
-          console.log("Raw API Response:", res);
-          return res; // Return so `onSuccess` can use it
+          return res;
         });
     },
 
-    onSuccess: (response, variables) => {
+    onSuccess: (response) => {
       if (response.status !== 200) {
         const errorMessage =
           response?.data?.message ||
@@ -48,13 +42,9 @@ const PendingProduct = () => {
         toast.error(errorMessage);
         return;
       }
-
       const apiResponse = response?.data;
-      console.log("API response data:", apiResponse);
-
       const message = apiResponse?.message || "Product updated successfully!";
       toast.success(message);
-
       refetch?.();
     },
     onError: (error) => {

@@ -10,6 +10,7 @@ import DashBoardLayout from "../layouts/DashBoardLayout";
 import VendorApplicationAction from "../pages/Vendor/VendorApplication/VendorApplicationAction";
 import AddProduct from "../pages/Vendor/Addproduct/AddProduct";
 import PendingProduct from "../pages/Admin/PendingProduct/PendingProduct";
+import MyProducts from "../pages/Vendor/MyProducts/MyProducts";
 
 export const router = createBrowserRouter([
   {
@@ -72,6 +73,9 @@ export const router = createBrowserRouter([
       {
         path:"/dashboard/vendor/add-product",
         element:<AddProduct></AddProduct>
+      },{
+        path:"/dashboard/vendor/my-products",
+        element:<MyProducts></MyProducts>
       }
     ]
   }

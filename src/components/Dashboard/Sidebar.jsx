@@ -118,14 +118,52 @@ const LeftSidebar = () => {
             <SidebarLink
               to="/dashboard/admin/applications"
               icon={<PlusCircle size={18} />}
-              active={isActive("/dashboard/applications")}
+              active={isActive("/dashboard/admin/applications")}
               onClick={closeSidebar}
               onHover={setHoveredItem}
-              id="applications"
+              id="requests"
               hoveredItem={hoveredItem}
               gradient="from-emerald-500 to-purple-600"
             >
-              Applications
+              Pending Applications
+            </SidebarLink>
+
+            <SidebarLink
+              to="/dashboard/admin/pending-products"
+              icon={<PlusCircle size={18} />}
+              active={isActive("/dashboard/admin/pending-products")}
+              onClick={closeSidebar}
+              onHover={setHoveredItem}
+              id="requests"
+              hoveredItem={hoveredItem}
+              gradient="from-emerald-500 to-purple-600"
+            >
+              Pending products
+            </SidebarLink>
+
+            <SidebarLink
+              to="/dashboard/vendor/add-product"
+              icon={<Activity size={18} />}
+              active={isActive("/dashboard/vendor/add-product")}
+              onClick={closeSidebar}
+              onHover={setHoveredItem}
+              id="activity"
+              hoveredItem={hoveredItem}
+              gradient="from-emerald-500 to-yellow-600"
+            >
+              Add Product
+            </SidebarLink>
+            <SidebarLink
+              to="/dashboard/vendor/my-products"
+              icon={<Activity size={18} />}
+              active={isActive("/dashboard/vendor/my-products")}
+              onClick={closeSidebar}
+              onHover={setHoveredItem}
+              id="activity"
+              hoveredItem={hoveredItem}
+              gradient="from-emerald-500 to-yellow-600"
+            >
+              My Products
             </SidebarLink>
 
             <SidebarLink
