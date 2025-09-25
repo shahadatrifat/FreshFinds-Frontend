@@ -8,11 +8,15 @@ import CartLoaderFull from "../loaders/CartLoaderFull";
 import UserDropdown from "./UserDropDown";
 import NavLinksList from "./NavLinkList";
 import axiosInstance from "../../../Hooks/useAxiosInstance";
+import CartIcon from "../cart/CartIcon";
 
 const Navbar = () => {
   const { user, SignOutUser, loading, setUser } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isCartOpen, setIsCartOpen] = useState(false);
+
   const firstNavLink = useRef(null);
+  const navigate = useNavigate();
 
   // Navigation Links
   const navLinks = [
@@ -25,35 +29,29 @@ const Navbar = () => {
     { to: "/about", label: "About" },
     !user && { to: "/signup", label: "Sign In/Sign Up" },
   ].filter(Boolean);
-  const navigate = useNavigate();
-  // Handlers
+
+  // Sign out logic
   const handleSignout = async () => {
     try {
-      // Step 1: Call your Firebase signOut method
-      await SignOutUser(); // Firebase sign-out
-
-      // Step 2: Clear the cookies in the backend (via API)
-      const response = await axiosInstance.post("/api/v1/user/signout"); // Assuming you have a logout route on the backend
+      await SignOutUser();
+      const response = await axiosInstance.post("/api/v1/user/signout");
       console.log("Cookie cleared successfully:", response.data);
-      // Step 3: Clear user state in the frontend (reset auth state)
-      setUser(null); // Clear user from context or state
 
-      // Step 4: Close the mobile menu if it's open
+      setUser(null);
       setIsMobileMenuOpen(false);
-
-      // Step 5: Redirect to the login page
-      navigate("/signin"); // Redirect to the sign-in page after logout
+      navigate("/signin");
     } catch (error) {
       console.error("Error logging out:", error);
       alert("There was an issue logging out. Please try again.");
     }
   };
+
   const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
 
   useEffect(() => {
     if (isMobileMenuOpen && firstNavLink.current) firstNavLink.current.focus();
   }, [isMobileMenuOpen]);
-
+  
   if (loading) return <CartLoaderFull />;
 
   return (
@@ -76,12 +74,23 @@ const Navbar = () => {
             firstNavLink={firstNavLink}
             onClick={() => {}}
           />
+
+          {/* Cart Icon - always visible */}
+          <CartIcon />
+
+          {/* User Dropdown */}
           <UserDropdown user={user} handleSignout={handleSignout} />
         </div>
 
         {/* Mobile Section */}
         <div className="lg:hidden flex items-center space-x-4">
+          {/* Cart Icon visible in mobile */}
+          <CartIcon />
+
+          {/* User Dropdown */}
           <UserDropdown user={user} handleSignout={handleSignout} />
+
+          {/* Mobile menu toggle */}
           <button
             id="mobile-menu-button"
             className="text-charcoal hover:text-[#f5f5dc] transition duration-300 focus:outline-none focus:text-[#f5f5dc]"

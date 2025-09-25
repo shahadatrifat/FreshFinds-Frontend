@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ProductHeader from "./ProductHeader";
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -6,11 +6,11 @@ import { fetchProductById } from "../../Services/productService";
 import toast from "react-hot-toast";
 import CartLoaderFull from "../shared/loaders/CartLoaderFull";
 import ProductDescription from "./ProductDescription";
-import ProductActions from "./ProductActions";
 import ProductReviews from "./ProductReviews";
 import RelatedProducts from "./RelatedProducts";
 import { Button } from "../../components/ui/button";
 import { ShoppingCart, ChevronLeft } from "lucide-react";  
+import ProductActions from "../../components/Product/ProductActions";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -21,6 +21,16 @@ const ProductDetails = () => {
   });
   const product = data?.data;
   console.log(product);
+  
+  // Cart state
+  const [cart, setCart] = useState([]);
+
+  // Load cart from localStorage on mount
+  
+  useEffect(() => {
+    const savedCart = localStorage.getItem("cart");
+    if (savedCart) setCart(JSON.parse(savedCart));
+  }, []);
 
   if (isLoading) {
     return <CartLoaderFull />;
@@ -82,15 +92,7 @@ const ProductDetails = () => {
             </div>
 
             {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-4 mt-4">
-              <Button className="flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 text-beige rounded-full font-semibold py-4 px-8 shadow-sm transition-all duration-300 transform hover:scale-102">
-                <ShoppingCart className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
-                Add to Cart
-              </Button>
-              <Button className="flex-1 bg-gradient-to-r from-[#DAA520] to-[#CDA434] hover:from-[#CDA434] hover:to-[#A8750B] text-[#FFF8DC] rounded-full py-4 px-8 shadow-sm transition-all duration-300 transform hover:scale-102">
-                Buy Now
-              </Button>
-            </div>
+             <ProductActions product={product} cart={cart} setCart={setCart} />
           </div>
         </div>
 
