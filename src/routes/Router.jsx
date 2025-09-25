@@ -11,6 +11,8 @@ import VendorApplicationAction from "../pages/Vendor/VendorApplication/VendorApp
 import AddProduct from "../pages/Vendor/Addproduct/AddProduct";
 import PendingProduct from "../pages/Admin/PendingProduct/PendingProduct";
 import MyProducts from "../pages/Vendor/MyProducts/MyProducts";
+import AllProducts from "../pages/All-Products/AllProducts";
+import ProductDetails from "../pages/ProductDetails/ProductDetails";
 
 export const router = createBrowserRouter([
   {
@@ -23,7 +25,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/products",
-        element: <h1>Products</h1>
+        element: <AllProducts></AllProducts>
       },
       {
         path: "/markets",
@@ -37,6 +39,10 @@ export const router = createBrowserRouter([
         path:"/apply-vendor",
         element:<VendorApplication></VendorApplication>
       },
+      {
+        path:"/product/:id",
+        element:<ProductDetails></ProductDetails>
+      }
       
     ]
   },

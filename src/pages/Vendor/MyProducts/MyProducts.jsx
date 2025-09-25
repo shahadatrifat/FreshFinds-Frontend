@@ -1,36 +1,77 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import CartLoader from "../../shared/loaders/CartLoader";
-import { fetchApprovedVendorProducts, fetchVendorProducts } from "../../../Services/productService";
+import {
+  fetchVendorProducts,
+  fetchApprovedVendorProducts,
+} from "../../../Services/productService";
 import useAuth from "../../../Hooks/useAuth";
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import MyProductsDialog from "./MyProductsDialog";
 
 const MyProducts = () => {
   const { user } = useAuth();
-  fetchApprovedVendorProducts(user?.uid);
-  const { data: products, isLoading, isError, refetch } = useQuery({
+
+  const {
+    data: productsData,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["myProducts", user?.uid],
     queryFn: () => fetchVendorProducts(user?.uid),
   });
 
+  // Local state to allow instant UI updates without refetch
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    if (productsData) {
+      setProducts(productsData);
+    }
+  }, [productsData]);
+
   const [filterStatus, setFilterStatus] = useState("all");
+  const [stockFilter, setStockFilter] = useState("all"); // NEW: stock filter state
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
   const [expandedCard, setExpandedCard] = useState(null);
 
+  // Handle updates from MyProductsDialog (delete or stock change)
+  const handleAction = (actionType, updatedProduct) => {
+    setProducts((prev) => {
+      if (actionType === "delete") {
+        return prev.filter((p) => p._id !== updatedProduct._id); // remove deleted product
+      } else if (actionType === "update") {
+        return prev.map((p) =>
+          p._id === updatedProduct._id ? { ...p, ...updatedProduct } : p
+        ); // update the modified product
+      }
+      return prev;
+    });
+  };
+
+  // Filter + sort logic
   const displayedProducts = useMemo(() => {
     if (!products) return [];
 
-    let filtered = products;
+    let filtered = [...products];
+
+    // Filter by application status
     if (filterStatus !== "all") {
-      filtered = products.filter((p) => p.applicationStatus === filterStatus);
+      filtered = filtered.filter((p) => p.applicationStatus === filterStatus);
     }
 
+    // Filter by stock availability
+    if (stockFilter !== "all") {
+      filtered = filtered.filter((p) => p.availabilityStatus === stockFilter);
+    }
+
+    // Sorting logic
     if (sortField) {
-      filtered = filtered.slice().sort((a, b) => {
+      filtered.sort((a, b) => {
         let valA = a[sortField];
         let valB = b[sortField];
 
@@ -49,7 +90,7 @@ const MyProducts = () => {
     }
 
     return filtered;
-  }, [products, filterStatus, sortField, sortOrder]);
+  }, [products, filterStatus, stockFilter, sortField, sortOrder]);
 
   if (isLoading) return <CartLoader />;
 
@@ -61,7 +102,7 @@ const MyProducts = () => {
         </p>
         <button
           onClick={() => refetch()}
-          className="mt-3 px-4 py-2 bg-emerald text-beige rounded hover:opacity-90"
+          className="mt-3 px-4 py-2 bg-emerald text-beige rounded hover:opacity-90 transition"
         >
           Retry
         </button>
@@ -87,7 +128,8 @@ const MyProducts = () => {
   };
 
   const renderSortIcon = (field) => {
-    if (sortField !== field) return <ArrowUpDown className="inline w-4 h-4 ml-1 text-gray-400" />;
+    if (sortField !== field)
+      return <ArrowUpDown className="inline w-4 h-4 ml-1 text-gray-400" />;
     return sortOrder === "asc" ? (
       <ArrowUp className="inline w-4 h-4 ml-1 text-emerald" />
     ) : (
@@ -101,22 +143,44 @@ const MyProducts = () => {
         My Products ({displayedProducts.length})
       </h2>
 
-      {/* Filter Buttons */}
-      <div className="flex gap-2 justify-center mb-4 flex-wrap">
-        {["all", "approved", "pending", "rejected"].map((status) => (
-          <button
-            key={status}
-            className={`px-3 py-1 rounded font-medium flex items-center gap-1 transition-colors duration-200 ${
-              filterStatus === status
-                ? "bg-emerald text-beige border border-emerald"
-                : "bg-beige text-emerald border border-emerald hover:bg-emerald hover:text-beige"
-            }`}
-            onClick={() => setFilterStatus(status)}
-            title={`Filter by ${status.charAt(0).toUpperCase() + status.slice(1)}`}
-          >
-            {status.charAt(0).toUpperCase() + status.slice(1)}
-          </button>
-        ))}
+      {/* Filter Section */}
+      <div className="flex flex-wrap justify-center gap-2 mb-6">
+        {/* Status Filter */}
+        <div className="flex gap-2">
+          {["all", "approved", "pending", "rejected"].map((status) => (
+            <button
+              key={status}
+              className={`px-3 py-1 rounded font-medium text-sm transition-colors duration-200 ${
+                filterStatus === status
+                  ? "bg-emerald text-beige border border-emerald"
+                  : "bg-beige text-emerald border border-emerald hover:bg-emerald hover:text-beige"
+              }`}
+              onClick={() => setFilterStatus(status)}
+            >
+              {status.charAt(0).toUpperCase() + status.slice(1)}
+            </button>
+          ))}
+        </div>
+
+        {/* Divider */}
+        <span className="hidden sm:inline-block border-l border-gray-300 mx-2"></span>
+
+        {/* Stock Filter */}
+        <div className="flex gap-2">
+          {["all", "active", "out of stock"].map((status) => (
+            <button
+              key={status}
+              className={`px-3 py-1 rounded font-medium text-sm transition-colors duration-200 ${
+                stockFilter === status
+                  ? "bg-green-600 text-white border border-green-600"
+                  : "bg-beige text-green-600 border border-green-600 hover:bg-green-600 hover:text-white"
+              }`}
+              onClick={() => setStockFilter(status)}
+            >
+              {status.charAt(0).toUpperCase() + status.slice(1)}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Desktop Table */}
@@ -129,20 +193,30 @@ const MyProducts = () => {
                 <th
                   key={field}
                   className="px-4 py-2 text-center cursor-pointer select-none"
-                  onClick={() => handleSort(field === "status" ? "applicationStatus" : field)}
+                  onClick={() =>
+                    handleSort(field === "status" ? "applicationStatus" : field)
+                  }
                   title={`Click to sort by ${field}`}
                 >
                   {field.charAt(0).toUpperCase() + field.slice(1)}
-                  {renderSortIcon(field === "status" ? "applicationStatus" : field)}
+                  {renderSortIcon(
+                    field === "status" ? "applicationStatus" : field
+                  )}
                 </th>
               ))}
               <th className="px-4 py-2 text-center">Overview</th>
-              <th className="px-4 py-2 text-center">Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <AnimatePresence component="tbody">
             {displayedProducts.map((product) => (
-              <tr key={product._id} className="border-b">
+              <motion.tr
+                key={product._id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.25 }}
+                className="border-b"
+              >
                 <td className="px-4 py-2 text-center">
                   {product.productImage ? (
                     <img
@@ -157,6 +231,8 @@ const MyProducts = () => {
                 <td className="px-4 py-2 text-center">{product.name}</td>
                 <td className="px-4 py-2 text-center">${product.price}</td>
                 <td className="px-4 py-2 text-center">{product.category}</td>
+
+                {/* Status Badge */}
                 <td className="px-4 py-2 text-center">
                   <span
                     className={`px-4 py-1 rounded-full text-beige text-sm capitalize ${
@@ -170,19 +246,30 @@ const MyProducts = () => {
                     {product.applicationStatus}
                   </span>
                 </td>
-                <td className="px-4 py-2 text-center">{product.stock}</td>
-                <td className="px-4 py-2 text-center"> <MyProductsDialog product={product}></MyProductsDialog></td>
+
+                {/* Stock Badge */}
                 <td className="px-4 py-2 text-center">
-                  <Link
-                    to={`/vendor/product/edit/${product._id}`}
-                    className="text-emerald-600 hover:text-emerald-800"
+                  <span
+                    className={`whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-all duration-300
+                      ${
+                        product.availabilityStatus === "active"
+                          ? "border-green-500 text-green-600 bg-green-50"
+                          : "border-red-500 text-red-600 bg-red-50"
+                      }`}
                   >
-                    Edit
-                  </Link>
+                    {product.availabilityStatus}
+                  </span>
                 </td>
-              </tr>
+
+                <td className="px-4 py-2 text-center">
+                  <MyProductsDialog
+                    product={product}
+                    onAction={handleAction}
+                  />
+                </td>
+              </motion.tr>
             ))}
-          </tbody>
+          </AnimatePresence>
         </table>
       </div>
 
@@ -195,11 +282,13 @@ const MyProducts = () => {
               layout
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
+              exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
               className="bg-beige p-4 rounded-lg shadow border cursor-pointer"
               onClick={() =>
-                setExpandedCard(expandedCard === product._id ? null : product._id)
+                setExpandedCard(
+                  expandedCard === product._id ? null : product._id
+                )
               }
             >
               <div className="flex justify-between items-center">
@@ -220,7 +309,10 @@ const MyProducts = () => {
               <motion.div
                 layout
                 initial={false}
-                animate={{ height: expandedCard === product._id ? "auto" : 0, opacity: expandedCard === product._id ? 1 : 0 }}
+                animate={{
+                  height: expandedCard === product._id ? "auto" : 0,
+                  opacity: expandedCard === product._id ? 1 : 0,
+                }}
                 transition={{ duration: 0.3 }}
                 className="overflow-hidden mt-3"
               >
@@ -239,24 +331,25 @@ const MyProducts = () => {
                     )}
                     <div className="flex flex-col text-sm text-charcoal">
                       <p>
-                        <span className="font-medium">Price:</span> ${product.price}
+                        <span className="font-medium">Price:</span> $
+                        {product.price}
                       </p>
                       <p>
-                        <span className="font-medium">Category:</span> {product.category}
+                        <span className="font-medium">Category:</span>{" "}
+                        {product.category}
                       </p>
                       <p>
-                        <span className="font-medium">Stock:</span> {product.stock}
+                        <span className="font-medium">Stock:</span>{" "}
+                        {product.stock}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex gap-2 mt-2 sm:mt-0">
-                    <Link
-                      to={`/vendor/product/edit/${product._id}`}
-                      className="px-3 py-1 bg-emerald text-beige rounded hover:opacity-90 text-sm"
-                    >
-                      Edit
-                    </Link>
+                    <MyProductsDialog
+                      product={product}
+                      onAction={handleAction}
+                    />
                   </div>
                 </div>
               </motion.div>

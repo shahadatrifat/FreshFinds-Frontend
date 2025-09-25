@@ -3,13 +3,15 @@ import { useForm } from "react-hook-form";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import { useNavigate } from "react-router";
-import { Camera } from "lucide-react";
+import { Camera, X } from "lucide-react";
 import PageWrapper from "../../shared/PageWrapper/PageWrapper";
 import ComboBoxResponsive from "../../../components/ui/ComboBoxResponsive";
 import useAuth from "../../../Hooks/useAuth";
 import toast from "react-hot-toast";
 import { addProduct } from "../../../Services/productService";
 import Swal from "sweetalert2";
+
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 
 const AddProduct = () => {
   const {
@@ -18,6 +20,7 @@ const AddProduct = () => {
     formState: { errors },
     reset,
     setValue,
+    watch,
   } = useForm();
 
   const [productImage, setProductImage] = useState(null);
@@ -27,36 +30,52 @@ const AddProduct = () => {
 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const { user } = useAuth();
+
+  const productName = watch("name", "");
+
   const onSubmit = async (data) => {
     setLoading(true);
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("description", data.description);
-    formData.append("price", data.price);
-    formData.append("stock", data.stock);
-    formData.append("category", data.category);
-    formData.append("vendorId", user?.uid);
 
-    if (productImage) {
-      formData.append("productImage", productImage);
+    if (!selectedCategory) {
+      toast.error("Please select a category");
+      setLoading(false);
+      return;
     }
-    console.log("FormData before sending:", [...formData.entries()]);
+
     try {
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("description", data.description);
+      formData.append("price", data.price);
+      formData.append("stock", data.stock);
+      formData.append("category", data.category || selectedCategory.value);
+      // send firebase uid (or vendor id as you handle on backend)
+      formData.append("vendorId", user?.uid || "");
+
+      if (productImage) {
+        formData.append("productImage", productImage);
+      }
+
+      // Debug log (remove in production)
+      // console.log("FormData entries:", [...formData.entries()]);
+
       const response = await addProduct(formData);
+
       Swal.fire({
         icon: "success",
-        title: "Product added successfully",
-        text: "Your product is now under review and will be visible once approved.",
+        title: "Product added",
+        text: "Your product is now under review and will appear once approved.",
         showConfirmButton: false,
         timer: 1500,
       });
 
-      console.log(`Product successfully:`, response.data);
+      // Reset form
       reset();
       setPreview(null);
       setProductImage(null);
       setSelectedCategory(null);
 
+      // You can navigate to vendor dashboard or product list if desired
       // navigate("/vendor/dashboard");
     } catch (error) {
       const message = error.response?.data?.message || "Failed to add product";
@@ -66,31 +85,41 @@ const AddProduct = () => {
     }
   };
 
-  // Handle file change (product image)
   const handleImageChange = (e) => {
-    const selectedFile = e.target.files[0];
+    const selectedFile = e.target.files?.[0];
     if (!selectedFile) return;
 
+    // Validate type
     if (!selectedFile.type.startsWith("image/")) {
-      toast.error("Please upload a valid image file!");
+      toast.error("Please upload an image file (jpg, png, etc.)");
       return;
     }
 
-    if (selectedFile.size > 2 * 1024 * 1024) {
-      toast.error("Image size should be less than 2MB!");
+    // Validate size
+    if (selectedFile.size > MAX_IMAGE_SIZE) {
+      toast.error("Image is too large. Max size is 5MB.");
       return;
     }
 
     setProductImage(selectedFile);
-    const fileReader = new FileReader();
-    fileReader.onloadend = () => setPreview(fileReader.result);
-    fileReader.readAsDataURL(selectedFile);
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result);
+    };
+    reader.readAsDataURL(selectedFile);
+  };
+
+  const removeImage = (e) => {
+    e.stopPropagation();
+    setProductImage(null);
+    setPreview(null);
+    // reset file input value if you keep a ref; here hidden input will be replaced on next selection
   };
 
   return (
     <PageWrapper>
-      <div className="max-w-4xl mx-auto p-8 bg-beige backdrop-blur-lg rounded-2xl shadow-xl border border-gray-100">
-        {/* Heading */}
+      <div className="max-w-5xl mx-auto p-8 bg-beige backdrop-blur-lg rounded-2xl shadow-xl border border-gray-100">
         <h1 className="text-4xl font-extrabold text-emerald-700 mb-8 text-center">
           Add New Product
         </h1>
@@ -111,6 +140,7 @@ const AddProduct = () => {
                 {...register("name", { required: "Product name is required" })}
                 className="w-full mt-2 p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
                 placeholder="Enter product name"
+                aria-invalid={!!errors.name}
               />
               {errors.name && (
                 <p className="text-red-500 text-sm mt-1">
@@ -119,7 +149,7 @@ const AddProduct = () => {
               )}
             </div>
 
-            {/* Product Price */}
+            {/* Price */}
             <div className="form-group">
               <Label
                 htmlFor="price"
@@ -130,9 +160,14 @@ const AddProduct = () => {
               <Input
                 id="price"
                 type="number"
-                {...register("price", { required: "Price is required" })}
+                step="0.01"
+                {...register("price", {
+                  required: "Price is required",
+                  min: { value: 0, message: "Price must be non-negative" },
+                })}
                 className="w-full mt-2 p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
                 placeholder="Enter price"
+                aria-invalid={!!errors.price}
               />
               {errors.price && (
                 <p className="text-red-500 text-sm mt-1">
@@ -141,7 +176,7 @@ const AddProduct = () => {
               )}
             </div>
 
-            {/* Product Stock */}
+            {/* Stock */}
             <div className="form-group">
               <Label
                 htmlFor="stock"
@@ -154,9 +189,11 @@ const AddProduct = () => {
                 type="number"
                 {...register("stock", {
                   required: "Stock quantity is required",
+                  min: { value: 0, message: "Stock must be non-negative" },
                 })}
                 className="w-full mt-2 p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
                 placeholder="Enter stock quantity"
+                aria-invalid={!!errors.stock}
               />
               {errors.stock && (
                 <p className="text-red-500 text-sm mt-1">
@@ -165,7 +202,7 @@ const AddProduct = () => {
               )}
             </div>
 
-            {/* ComboBox Category */}
+            {/* Category */}
             <div className="form-group">
               <Label
                 htmlFor="category"
@@ -181,22 +218,12 @@ const AddProduct = () => {
                     setValue("category", category?.value);
                   }}
                 />
-                {errors.category && (
+                {(!selectedCategory || !selectedCategory.value) && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.category.message}
+                    Please select a category
                   </p>
                 )}
               </div>
-              {selectedCategory === null && (
-                <p className="text-red-500 text-sm mt-1">
-                  Please select a category
-                </p>
-              )}
-              {errors.category && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.category.message}
-                </p>
-              )}
             </div>
           </div>
 
@@ -212,10 +239,15 @@ const AddProduct = () => {
               id="description"
               {...register("description", {
                 required: "Description is required",
+                minLength: {
+                  value: 10,
+                  message: "Description should be at least 10 characters",
+                },
               })}
               className="w-full mt-2 p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
               placeholder="Describe the product in detail"
               rows="4"
+              aria-invalid={!!errors.description}
             />
             {errors.description && (
               <p className="text-red-500 text-sm mt-1">
@@ -224,7 +256,7 @@ const AddProduct = () => {
             )}
           </div>
 
-          {/* Product Image Upload */}
+          {/* Product Image Upload (tall preview) */}
           <div className="form-group">
             <Label
               htmlFor="productImage"
@@ -232,23 +264,51 @@ const AddProduct = () => {
             >
               Product Image
             </Label>
+
             <div className="mt-4 flex justify-center">
               <label
                 htmlFor="productImage"
-                className="relative w-full max-w-lg flex items-center justify-center rounded-xl border-2 border-dashed border-emerald-300 bg-emerald-50 hover:bg-emerald-100 transition cursor-pointer"
+                className="relative w-full max-w-[400px] mx-auto flex items-center justify-center rounded-xl border-2 border-dashed border-emerald-300 bg-emerald-50 hover:bg-emerald-100 transition cursor-pointer overflow-hidden"
+                aria-label="Upload product image"
+                title="Click to upload product image"
               >
+                {/* Tall responsive preview */}
                 {preview ? (
-                  <img
-                    src={preview}
-                    alt="Product Preview"
-                    className="w-full h-64 object-cover rounded-xl shadow-lg"
-                  />
+                  <>
+                    <img
+                      src={preview}
+                      alt={productName || "Product Preview"}
+                      className="w-full h-[60vh] md:h-[48vh] lg:h-[56vh] object-cover object-center rounded-xl shadow-lg"
+                      loading="lazy"
+                    />
+                    {/* Caption overlay */}
+                    {productName && (
+                      <div className="absolute left-4 bottom-4 bg-black/40 px-4 py-2 rounded backdrop-blur-sm">
+                        <p className="text-beige font-semibold truncate max-w-[70vw]">
+                          {productName}
+                        </p>
+                      </div>
+                    )}
+                    {/* Remove button */}
+                    <button
+                      type="button"
+                      onClick={removeImage}
+                      className="absolute top-4 right-4 z-50 bg-offwhite/70 p-2 rounded-full shadow hover:bg-offwhite transition"
+                      aria-label="Remove image"
+                    >
+                      <X className="w-4 h-4 text-gray-800" />
+                    </button>
+                  </>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-16 text-gray-500">
                     <Camera className="w-12 h-12 text-emerald-500 mb-4" />
                     <p className="text-lg">Click to upload product image</p>
+                    <p className="text-sm text-gray-400 mt-2">
+                      Recommended: tall/portrait images; max 5MB
+                    </p>
                   </div>
                 )}
+
                 <input
                   id="productImage"
                   type="file"
@@ -265,7 +325,11 @@ const AddProduct = () => {
             <button
               type="submit"
               disabled={loading || !selectedCategory}
-              className="px-10 py-4 bg-gradient-to-r from-emerald-500 to-emerald-700 text-beige font-semibold rounded-xl shadow-lg hover:shadow-emerald-400/50 hover:scale-105 transition-transform duration-300"
+              className={`px-10 py-4 ${
+                loading
+                  ? "bg-emerald-300 cursor-not-allowed"
+                  : "bg-gradient-to-r from-emerald-500 to-emerald-700 hover:scale-105"
+              } text-beige font-semibold rounded-xl shadow-lg transition-transform duration-300`}
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
