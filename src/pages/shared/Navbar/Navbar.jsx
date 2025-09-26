@@ -13,8 +13,6 @@ import CartIcon from "../cart/CartIcon";
 const Navbar = () => {
   const { user, SignOutUser, loading, setUser } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isCartOpen, setIsCartOpen] = useState(false);
-
   const firstNavLink = useRef(null);
   const navigate = useNavigate();
 
@@ -51,7 +49,7 @@ const Navbar = () => {
   useEffect(() => {
     if (isMobileMenuOpen && firstNavLink.current) firstNavLink.current.focus();
   }, [isMobileMenuOpen]);
-  
+
   if (loading) return <CartLoaderFull />;
 
   return (
@@ -61,36 +59,9 @@ const Navbar = () => {
       transition={{ duration: 0.5 }}
       className="bg-emerald w-full sticky top-0 z-50"
     >
-      <div className="mx-auto px-6 flex items-center justify-between">
-        {/* Logo */}
-        <Link to="/">
-          <Logo />
-        </Link>
-
-        {/* Desktop Nav */}
-        <div className="hidden lg:flex items-center text-charcoal text-xl font-montserrat space-x-7">
-          <NavLinksList
-            navLinks={navLinks}
-            firstNavLink={firstNavLink}
-            onClick={() => {}}
-          />
-
-          {/* Cart Icon - always visible */}
-          <CartIcon />
-
-          {/* User Dropdown */}
-          <UserDropdown user={user} handleSignout={handleSignout} />
-        </div>
-
-        {/* Mobile Section */}
-        <div className="lg:hidden flex items-center space-x-4">
-          {/* Cart Icon visible in mobile */}
-          <CartIcon />
-
-          {/* User Dropdown */}
-          <UserDropdown user={user} handleSignout={handleSignout} />
-
-          {/* Mobile menu toggle */}
+      <div className="mx-auto px-6 flex items-center justify-between lg:justify-between w-full">
+        {/* Mobile Menu Button */}
+        <div className="lg:hidden flex items-center">
           <button
             id="mobile-menu-button"
             className="text-charcoal hover:text-[#f5f5dc] transition duration-300 focus:outline-none focus:text-[#f5f5dc]"
@@ -100,6 +71,36 @@ const Navbar = () => {
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
+        </div>
+
+        {/* Logo - Flexed to the start, will align left */}
+        <Link to="/" className="flex ml-2 items-center space-x-3">
+          <Logo />
+        </Link>
+
+        {/* Desktop Nav */}
+        <div className="hidden lg:flex items-center space-x-7 flex-1 justify-center">
+          <NavLinksList
+            navLinks={navLinks}
+            firstNavLink={firstNavLink}
+            onClick={() => {}}
+          />
+        </div>
+
+        <div className="hidden lg:flex items-center space-x-6">
+          {/* Cart Icon */}
+          <CartIcon />
+
+          {/* User Dropdown */}
+          <UserDropdown user={user} handleSignout={handleSignout} />
+        </div>
+
+        {/* Mobile Section */}
+        <div className="lg:hidden flex items-center space-x-4 ml-auto">
+          {/* Cart Icon */}
+          <CartIcon />
+          {/* User Dropdown */}
+          <UserDropdown user={user} handleSignout={handleSignout} />
         </div>
       </div>
 
