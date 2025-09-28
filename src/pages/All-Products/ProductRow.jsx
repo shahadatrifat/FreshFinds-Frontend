@@ -79,7 +79,7 @@ const ProductRow = ({ title, products = [], seeMoreHref }) => {
         {seeMoreHref && (
           <a
             href={seeMoreHref}
-            className="text-sm text-emerald-700 hover:underline"
+            className="text-sm text-emerald hover:underline"
           >
             See more
           </a>

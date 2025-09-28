@@ -1,58 +1,50 @@
-import { ShoppingCart } from "lucide-react";
-import { Button } from "../../components/ui/button";
 import React from "react";
-import { Link } from "react-router";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "../../components/ui/tooltip";
+import { useParams } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { fetchPublicProducts } from "../../Services/productService";
+import toast from "react-hot-toast";
+import ProductCard from "../../pages/All-Products/ProductCard";
+import SkeletonCardLoader from "../shared/loaders/SkeletonCardLoader";
 
-const ProductCard = ({ product }) => {
+const CategoryPage = () => {
+  const { categoryId } = useParams();
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["products", categoryId],
+    queryFn: () => fetchPublicProducts({ category: categoryId }),
+    staleTime: 1000 * 60 * 5,
+    onError: () => toast.error("Failed to load products"),
+  });
+
+  const products = data?.data || [];
+
   return (
-    <div className="bg-beige border rounded-lg hover:shadow-md transition-all overflow-hidden">
-      {/* Product Image */}
-      <img
-        src={product.productImage || "/path/to/default-image.jpg"}
-        alt={product.name}
-        className="w-full h-40 object-cover"
-        loading="lazy"
-      />
+    <div className="max-w-4xl mx-auto p-6 space-y-6">
+      <h1 className="text-3xl font-bold text-emerald-600 capitalize">
+  {categoryId ? categoryId.replace(/_/g, " ") : ""}
+</h1>
 
-      {/* Product Details */}
-      <div className="p-3">
-        <Link
-          to={`/product/${product._id}`}
-          aria-label={`View details of ${product.name}`}
-        >
-          <h3 className="font-semibold hover:underline text-charcoal truncate">
-            {product.name}
-          </h3>
-        </Link>
-        <p className="text-sm text-gray-500 capitalize">{product.category}</p>
-        <p className="text-emerald font-lora">${product.price.toFixed(2)}</p>
-      </div>
-
-      <div className="flex justify-between items-center p-3 gap-3">
-        {/* Add to Cart */}
-        <Button
-          className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-beige rounded-lg font-medium transition-all duration-300"
-          aria-label={`Add ${product.name} to cart`}
-        >
-          <ShoppingCart className="w-5 h-5" />
-          Add to Cart
-        </Button>
-
-        {/* Buy Now */}
-        <Button
-          className="flex-1 bg-[#DAA520] text-beige rounded-lg hover:bg-[#B8860B] hover:text-[#FFF8DC] transition-all duration-300"
-          aria-label={`Buy ${product.name} now`}
-        >
-          Buy
-        </Button>
-      </div>
+      {isLoading ? (
+        <div className="space-y-4">
+          {[...Array(5)].map((_, i) => (
+            <SkeletonCardLoader key={i} />
+          ))}
+        </div>
+      ) : isError ? (
+        <p className="text-center text-red-500">Failed to load products.</p>
+      ) : products.length === 0 ? (
+        <p className="text-center text-gray-500">
+          No products available in this category.
+        </p>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {products.map((product) => (
+            <ProductCard key={product._id} product={product} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
-export default ProductCard;
+export default CategoryPage;

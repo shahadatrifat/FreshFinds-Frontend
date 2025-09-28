@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
-  // ✅ Load initial cart from localStorage safely
   const [cart, setCart] = useState(() => {
     try {
       const savedCart = localStorage.getItem("cart");
@@ -17,7 +17,6 @@ export const CartProvider = ({ children }) => {
     }
   });
 
-  // ✅ Persist cart in localStorage whenever it changes
   useEffect(() => {
     const saveCart = () => {
       localStorage.setItem("cart", JSON.stringify(cart));
@@ -57,9 +56,7 @@ export const CartProvider = ({ children }) => {
   const removeFromCart = (id) => {
   setCart((prevCart) => {
     const newCart = prevCart.filter((item) => item._id !== id);
-    if (newCart.length === 0) {
-      toast.info("Your cart is now empty.");
-    }
+   
     return newCart;
   });
   toast.error("Item removed from cart");
@@ -77,9 +74,9 @@ export const CartProvider = ({ children }) => {
 
   // Clear entire cart
   const clearCart = () => {
-    setCart([]);
-    toast.error("Cart cleared");
-  };
+  setCart([]);
+  localStorage.removeItem("cart");
+};
 
   return (
     <CartContext.Provider

@@ -13,6 +13,11 @@ import PendingProduct from "../pages/Admin/PendingProduct/PendingProduct";
 import MyProducts from "../pages/Vendor/MyProducts/MyProducts";
 import AllProducts from "../pages/All-Products/AllProducts";
 import ProductDetails from "../pages/ProductDetails/ProductDetails";
+import Payment from "../pages/Payment/Payment";
+import Checkout from "../pages/Checkout/Checkout";
+import MyOrders from "../pages/My-Orders/MyOrders";
+import ProfilePage from "../pages/My-Profile/ProfilePage";
+import Category from "../pages/category-dynamic/Category";
 
 export const router = createBrowserRouter([
   {
@@ -26,6 +31,10 @@ export const router = createBrowserRouter([
       {
         path: "/products",
         element: <AllProducts></AllProducts>
+      },
+      {
+        path:"/category/:categoryName",
+        element:<Category></Category>
       },
       {
         path: "/markets",
@@ -42,7 +51,17 @@ export const router = createBrowserRouter([
       {
         path:"/product/:id",
         element:<ProductDetails></ProductDetails>
+      },
+      
+      {
+        path:"/checkout",
+        element:<Checkout></Checkout>
+      },
+      {
+        path:"/profile",
+        element:<ProfilePage></ProfilePage>
       }
+
       
     ]
   },
@@ -82,6 +101,14 @@ export const router = createBrowserRouter([
       },{
         path:"/dashboard/vendor/my-products",
         element:<MyProducts></MyProducts>
+      },
+      {
+        path:"/dashboard/orders",
+        element:<MyOrders></MyOrders>
+      },
+      {
+        path:"/dashboard/profile",
+        element:<ProfilePage></ProfilePage>
       }
     ]
   }

@@ -108,3 +108,26 @@ export const fetchProductById = async (productId) => {
   const response = await axiosInstance.get(`/api/v1/product/${productId}`);
   return response.data;
 };
+export const getUserOrders = async (userId) => {
+  try {
+    const { data } = await axiosInstance.get(`/api/v1/user/orders/${userId}`);
+    return data; 
+  } catch (error) {
+    console.error("Error fetching user orders:", error);
+    throw error;
+  }
+};
+export const getUserProfile = async (uid) => {
+  try {
+    const { data } = await axiosInstance.get(`/api/v1/user/profile/${uid}`);
+    return data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || "Failed to fetch profile");
+  }
+};
+// Update user profile
+export const updateUserProfile = async (userId, updates) => {
+  const { data } = await axiosInstance.put(`/api/v1/user/update/${userId}`, updates);
+  return data;
+};
+
