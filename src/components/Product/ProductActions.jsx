@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { useCart } from "../../Contexts/CartContext/cartContext";
 import { useNavigate } from "react-router";
 
-const ProductActions = ({ product, variant = "details" }) => {
+const ProductActions = ({ product, variant = "details", isDisabled }) => {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const { cart, addToCart } = useCart();
@@ -65,7 +65,7 @@ const ProductActions = ({ product, variant = "details" }) => {
           <button
             onClick={() => setQuantity((q) => Math.max(1, q - 1))}
             className="p-2 hover:bg-offwhite transition-colors disabled:opacity-50 flex items-center justify-center"
-            disabled={quantity <= 1}
+            disabled={quantity <= 1 || isDisabled}
           >
             <Minus size={14} />
           </button>
@@ -75,6 +75,7 @@ const ProductActions = ({ product, variant = "details" }) => {
           <button
             onClick={() => setQuantity((q) => q + 1)}
             className="p-2 hover:bg-offwhite transition-colors flex items-center justify-center"
+            disabled={isDisabled}
           >
             <Plus size={14} />
           </button>
@@ -83,10 +84,10 @@ const ProductActions = ({ product, variant = "details" }) => {
         {/* Add to Cart Button */}
         <Button
           onClick={handleAddToCart}
-          disabled={isAdded}
+          disabled={isAdded || isDisabled}
           className={`flex items-center justify-center gap-2 rounded-xl font-medium shadow-md transition-all duration-300 
             ${
-              isAdded
+              isAdded || isDisabled
                 ? "bg-gray-400 cursor-not-allowed text-off"
                 : "bg-emerald-600 hover:bg-emerald-700 text-beige"
             }
@@ -102,6 +103,7 @@ const ProductActions = ({ product, variant = "details" }) => {
       {/* Buy Now Button */}
       <Button
         onClick={handleBuyNow}
+        disabled={isDisabled}
         className={`bg-[#DAA520] text-beige rounded-xl hover:bg-[#B8860B] hover:text-[#FFF8DC] shadow-md transition-all duration-300
           ${
             isCard

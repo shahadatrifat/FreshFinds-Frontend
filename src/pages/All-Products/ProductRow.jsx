@@ -1,4 +1,3 @@
-// src/components/ProductRow.jsx
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { motion, animate } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";

@@ -20,9 +20,6 @@ const Navbar = () => {
   const navLinks = [
     { to: "/", label: "Home" },
     { to: "/products", label: "All Products" },
-    { to: "/markets", label: "Markets" },
-    { to: "/offers", label: "Offers" },
-    { to: "/cart", label: "Cart" },
     { to: "/support", label: "Support" },
     { to: "/about", label: "About" },
     !user && { to: "/signup", label: "Sign In/Sign Up" },

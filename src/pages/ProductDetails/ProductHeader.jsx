@@ -27,13 +27,13 @@ const ProductHeader = ({ product }) => {
       </div>
 
       {/* Optional Product Image */}
-      <div className="w-full lg:w-64 flex-shrink-0">
+      {/* <div className="w-full lg:w-64 flex-shrink-0">
         <img
           src={product.productImage || "/default-product.png"}
           alt={product.name}
-          className="w-full h-64 lg:h-56 object-cover rounded-lg shadow-sm"
+          className="w-full h-64 lg:h-56 object-contain rounded-lg shadow-sm"
         />
-      </div>
+      </div> */}
     </div>
   );
 };

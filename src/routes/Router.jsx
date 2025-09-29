@@ -18,6 +18,11 @@ import Checkout from "../pages/Checkout/Checkout";
 import MyOrders from "../pages/My-Orders/MyOrders";
 import ProfilePage from "../pages/My-Profile/ProfilePage";
 import Category from "../pages/category-dynamic/Category";
+import AdRequestForm from "../pages/adRequest-vendor/AdRequest";
+import PendingAds from "../pages/Admin/PendingAds/PendingAds";
+import About from "../pages/About/About";
+import Support from "../pages/Support/Support";
+import UserManagement from "../pages/Admin/User-Management/UserManagement";
 
 export const router = createBrowserRouter([
   {
@@ -37,12 +42,12 @@ export const router = createBrowserRouter([
         element:<Category></Category>
       },
       {
-        path: "/markets",
-        element: <h1>Markets</h1>
+        path: "/support",
+        element: <Support></Support>
       },
       {
-        path: "/offers",
-        element: <h1>Offers</h1>
+        path: "/about",
+        element: <About></About>
       },
       {
         path:"/apply-vendor",
@@ -88,12 +93,20 @@ export const router = createBrowserRouter([
         element:<h1>Dashboard</h1>
       },
       {
+        path:"/dashboard/admin/user-management",
+        element:<UserManagement></UserManagement>
+      },
+      {
         path:"/dashboard/admin/applications",
         element:<VendorApplicationAction></VendorApplicationAction>
       },
       {
         path:"/dashboard/admin/pending-products",
         element:<PendingProduct></PendingProduct>
+      },
+      {
+        path:"/dashboard/admin/add-management",
+        element:<PendingAds></PendingAds>
       },
       {
         path:"/dashboard/vendor/add-product",
@@ -109,7 +122,10 @@ export const router = createBrowserRouter([
       {
         path:"/dashboard/profile",
         element:<ProfilePage></ProfilePage>
-      }
+      },{
+        path:"/dashboard/request-for-ad",
+        element:<AdRequestForm></AdRequestForm>
+      },
     ]
   }
 ]);

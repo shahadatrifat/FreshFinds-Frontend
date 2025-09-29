@@ -93,17 +93,15 @@ export const updateProductPrice = async (productId, price, firebaseUid) => {
   return response.data;
 };
 // Fetch public products with pagination and optional category filter
-export const fetchPublicProducts = async ({
-  category,
-  
-}) => {
+export const fetchPublicProducts = async ({ category }) => {
   const response = await axiosInstance.get("/api/v1/product/public", {
     params: { category },
   });
+  console.log("Public products fetched successfully:", response.data);
   return response.data;
 };
 
-// fetch product by id 
+// fetch product by id
 export const fetchProductById = async (productId) => {
   const response = await axiosInstance.get(`/api/v1/product/${productId}`);
   return response.data;
@@ -111,7 +109,7 @@ export const fetchProductById = async (productId) => {
 export const getUserOrders = async (userId) => {
   try {
     const { data } = await axiosInstance.get(`/api/v1/user/orders/${userId}`);
-    return data; 
+    return data;
   } catch (error) {
     console.error("Error fetching user orders:", error);
     throw error;
@@ -127,7 +125,34 @@ export const getUserProfile = async (uid) => {
 };
 // Update user profile
 export const updateUserProfile = async (userId, updates) => {
-  const { data } = await axiosInstance.put(`/api/v1/user/update/${userId}`, updates);
+  const { data } = await axiosInstance.put(
+    `/api/v1/user/update/${userId}`,
+    updates
+  );
   return data;
 };
 
+
+// AD SECTION
+export const requestAd = async (adData) => {
+  const response = await axiosInstance.post("/api/v1/ad/request", adData);
+  return response.data;
+};
+export const fetchPendingAds = async () => {
+  const res = await axiosInstance.get("/api/v1/ad/pending");
+  return res.data.data;
+};
+export const approveAdRequest = async (adId) => {
+  const res = await axiosInstance.patch(`/api/v1/ad/${adId}/approve`);
+  return res.data;
+};
+
+export const rejectAdRequest = async (adId) => {
+  const res = await axiosInstance.patch(`/api/v1/ad/${adId}/reject`);
+  return res.data;
+};
+export const fetchActiveAds = async () => {
+  const res = await axiosInstance.get("/api/v1/ad/active");
+  console.log("Active ads fetched successfully:", res.data);
+  return res.data;
+};

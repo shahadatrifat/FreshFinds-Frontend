@@ -44,9 +44,7 @@ const MyProductsDialog = ({ product, onAction }) => {
   const {user}=useAuth()
   const [newPrice, setNewPrice] = useState(product.price);
 
-  // =========================
-  // PRICE UPDATE MUTATION
-  // =========================
+  
   const { mutate: updatePriceMutate, isLoading: updatingPrice } = useMutation({
   mutationFn: () => updateProductPrice(product._id, Number(newPrice), user?.uid), 
   onSuccess: (res) => {
@@ -66,9 +64,7 @@ const MyProductsDialog = ({ product, onAction }) => {
     updatePriceMutate();
   };
 
-  // =========================
-  // OUT OF STOCK MUTATION
-  // =========================
+ 
   const { mutate: markOutOfStockMutate, isLoading: markingOut } = useMutation({
     mutationFn: () => markProductOutOfStock(product._id),
     onSuccess: (res) => {
@@ -80,9 +76,7 @@ const MyProductsDialog = ({ product, onAction }) => {
     },
   });
 
-  // =========================
-  // MARK ACTIVE MUTATION
-  // =========================
+  
   const { mutate: markActiveMutate, isLoading: markingActive } = useMutation({
     mutationFn: () => markProductActive(product._id),
     onSuccess: (res) => {
@@ -94,9 +88,7 @@ const MyProductsDialog = ({ product, onAction }) => {
     },
   });
 
-  // =========================
-  // DELETE PRODUCT MUTATION
-  // =========================
+  
   const { mutate: deleteProductMutate, isLoading: deleting } = useMutation({
     mutationFn: () => deleteProduct(product._id),
     onSuccess: (res) => {
@@ -264,8 +256,11 @@ const MyProductsDialog = ({ product, onAction }) => {
                       </div>
                     )}
                   </div>
+                  
                 </div>
+                
               </motion.div>
+              <span className="text-sm text-gray-500">Product ID: {product._id}</span>
             </div>
 
             <Separator />

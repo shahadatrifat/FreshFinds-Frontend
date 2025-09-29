@@ -21,9 +21,10 @@ import {
 import useAuth from "../../Hooks/useAuth";
 import Logo from "../../pages/shared/Logo/Logo";
 import { getUserProfile } from "../../Services/productService";
+import toast from "react-hot-toast";
 
 const LeftSidebar = () => {
-  const { user, SignOutUser, loading } = useAuth();
+  const { user, SignOutUser, } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [hoveredItem, setHoveredItem] = useState(null);
 
@@ -34,8 +35,6 @@ const LeftSidebar = () => {
 
   // profile
 
-  const [displayName, setDisplayName] = useState("");
-  const [photoURL, setPhotoURL] = useState("");
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
@@ -43,13 +42,10 @@ const LeftSidebar = () => {
       try {
         const data = await getUserProfile(user?.uid);
         setProfile(data);
-        setDisplayName(data.displayName || "");
-        setPhotoURL(data.photoURL || "");
+       
       } catch (err) {
         toast.error(err.message);
-      } finally {
-        setLoading(false);
-      }
+      } 
     };
     if (user?.uid) fetchProfile();
   }, [user?.uid]);
@@ -135,16 +131,16 @@ const LeftSidebar = () => {
             </SidebarLink>
 
             <SidebarLink
-              to="/dashboard/users"
+              to="/dashboard/admin/user-management"
               icon={<Users size={18} />}
-              active={isActive("/dashboard/users")}
+              active={isActive("/dashboard/admin/user-management")}
               onClick={closeSidebar}
               onHover={setHoveredItem}
               id="users" // Unique ID for the Users link
               hoveredItem={hoveredItem}
               gradient="from-emerald-500 to-emerald-600"
             >
-              Users
+              User Management
             </SidebarLink>
 
             <SidebarLink
@@ -213,29 +209,29 @@ const LeftSidebar = () => {
             </SidebarLink>
 
             <SidebarLink
-              to="/dashboard/activity"
+              to="/dashboard/request-for-ad"
               icon={<Activity size={18} />}
-              active={isActive("/dashboard/activity")}
+              active={isActive("/dashboard/request-for-ad")}
               onClick={closeSidebar}
               onHover={setHoveredItem}
-              id="activity" // Unique ID for the Activity link
+              id="request-for-ad" // Unique ID for the Activity link
               hoveredItem={hoveredItem}
               gradient="from-indigo-500 to-indigo-600"
             >
-              Activity
+              Request for Ad
             </SidebarLink>
 
             <SidebarLink
-              to="/dashboard/performance"
+              to="/dashboard/admin/add-management"
               icon={<BarChart size={18} />} // Updated icon for performance
-              active={isActive("/dashboard/performance")}
+              active={isActive("/dashboard/admin/add-management")}
               onClick={closeSidebar}
               onHover={setHoveredItem}
               id="performance" // Unique ID for the Performance link
               hoveredItem={hoveredItem}
               gradient="from-cyan-500 to-cyan-600"
             >
-              Performance
+              Add Management
             </SidebarLink>
           </nav>
 

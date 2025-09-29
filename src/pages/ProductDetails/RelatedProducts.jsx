@@ -9,21 +9,22 @@ const RelatedProducts = ({ product }) => {
 
   useEffect(() => {
     const fetchRelated = async () => {
-      try {
-        setLoading(true);
-        const res = await fetchPublicProducts({
-          category: product.category,
-          limit: 10,
-        });
+  try {
+    setLoading(true);
+    const res = await fetchPublicProducts({
+      category: product.category,
+      limit: 10, 
+    });
+    console.log("Related products fetched successfully:", res.data);
+    const filtered = res.data.filter((p) => p._id !== product._id);
+    setRelatedProducts(filtered);
+  } catch (error) {
+    console.log("Error fetching related products:", error.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
-        const filtered = res.data.filter((p) => p._id !== product._id);
-        setRelatedProducts(filtered);
-      } catch (error) {
-        toast.error("Failed to load related products");
-      } finally {
-        setLoading(false);
-      }
-    };
 
     if (product?.category) fetchRelated();
   }, [product]);

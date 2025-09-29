@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProductHeader from "./ProductHeader";
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -11,21 +11,17 @@ import RelatedProducts from "./RelatedProducts";
 import { Button } from "../../components/ui/button";
 import { ShoppingCart, ChevronLeft } from "lucide-react";
 import ProductActions from "../../components/Product/ProductActions";
+import PriceHistory from "./PriceHistory";
 
 const ProductDetails = () => {
   const { id } = useParams();
-
   const { data, isLoading, isError } = useQuery({
     queryKey: ["product", id],
     queryFn: () => fetchProductById(id),
   });
+
   const product = data?.data;
-  console.log(product);
-
-  // Cart state
   const [cart, setCart] = useState([]);
-
-  // Load cart from localStorage on mount
 
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
@@ -39,6 +35,8 @@ const ProductDetails = () => {
     toast.error(`Error: ${isError.message}`);
     return null;
   }
+
+  const isProductOutOfStock = product?.availabilityStatus === "out of stock";
 
   return (
     <div className="bg-offwhite min-h-screen py-8">
@@ -65,7 +63,7 @@ const ProductDetails = () => {
             <img
               src={product.productImage || "/path/to/default-image.jpg"}
               alt={product.name}
-              className="w-full lg:w-[400px] h-96 object-cover rounded-2xl transition-transform duration-500"
+              className="w-full lg:w-[400px] h-[400px] object-contain rounded-2xl transition-transform duration-500"
               loading="lazy"
             />
           </div>
@@ -85,8 +83,17 @@ const ProductDetails = () => {
                 ${product.price.toFixed(2)}
               </p>
               <p className="text-gray-400 text-sm mt-1">
-                Stock: {product.stock} | Vendor: {product.vendorName}
+                Vendor: {product.vendorName}
               </p>
+            </div>
+
+            {/* Stock Status */}
+            <div className="text-lg font-medium text-gray-700 mt-2">
+              {isProductOutOfStock ? (
+                <span className="text-red-500">Out of Stock</span>
+              ) : (
+                <span className="text-green-500">In Stock</span>
+              )}
             </div>
 
             {/* Description */}
@@ -105,12 +112,14 @@ const ProductDetails = () => {
               cart={cart}
               variant="details"
               setCart={setCart}
+              isDisabled={isProductOutOfStock} 
             />
           </div>
         </div>
 
         <hr className="my-8 border-t border-gray-200/50" />
-
+        {/* Price history */}
+        <PriceHistory product={product} />
         {/* Reviews */}
         <ProductReviews product={product} />
         <hr className="my-8 border-t border-gray-200/50" />

@@ -75,8 +75,7 @@ const AddProduct = () => {
       setProductImage(null);
       setSelectedCategory(null);
 
-      // You can navigate to vendor dashboard or product list if desired
-      // navigate("/vendor/dashboard");
+     
     } catch (error) {
       const message = error.response?.data?.message || "Failed to add product";
       toast.error(message);
@@ -114,7 +113,6 @@ const AddProduct = () => {
     e.stopPropagation();
     setProductImage(null);
     setPreview(null);
-    // reset file input value if you keep a ref; here hidden input will be replaced on next selection
   };
 
   return (

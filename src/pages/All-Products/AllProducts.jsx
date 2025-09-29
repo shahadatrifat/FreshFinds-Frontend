@@ -2,7 +2,6 @@ import React from "react";
 import { useQueries } from "@tanstack/react-query";
 import { fetchPublicProducts } from "../../Services/productService";
 import toast from "react-hot-toast";
-import CartLoader from "../shared/loaders/CartLoader";
 import ProductRow from "./ProductRow";
 import SkeletonCardLoader from "../shared/loaders/SkeletonCardLoader";
 
@@ -33,9 +32,9 @@ const AllProducts = () => {
   const categoryQueries = useQueries({
     queries: categories.map((cat) => ({
       queryKey: ["products", cat.value],
-      queryFn: () => fetchPublicProducts({ category: cat.value }),
-      staleTime: 1000 * 60 * 5, // cache for 5 minutes
-      retry: 1, // only retry once if it fails
+      queryFn: () => fetchPublicProducts({ category: cat.value, limit: 10 }), 
+      staleTime: 1000 * 60 * 5,
+      retry: 1,
       onError: () => toast.error(`Failed to load ${cat.label} products`),
     })),
   });
@@ -48,18 +47,11 @@ const AllProducts = () => {
 
           return (
             <div key={cat.value} className="space-y-4">
-              {/* Category Header */}
-              <div className="flex flex-col items-center text-center">
-                <h2 className="text-2xl font-bold text-emerald-600">
-                  {cat.label}
-                </h2>
-              </div>
-
               {/* State Handling */}
               {query.isPending ? (
                 // Loading State
                 <div className="flex justify-center items-center py-8">
-                  <SkeletonCardLoader></SkeletonCardLoader>
+                  <SkeletonCardLoader />
                 </div>
               ) : query.isError ? (
                 // Error State
@@ -68,9 +60,11 @@ const AllProducts = () => {
                 </p>
               ) : query.data?.data?.length === 0 ? (
                 // Empty State
-                <p className="text-center text-gray-500">
-                  No products available in this category.
-                </p>
+                <div className="text-center">
+                  <p className="text-gray-500">
+                    No products available in {cat.label}.
+                  </p>
+                </div>
               ) : (
                 // Success State
                 <ProductRow
