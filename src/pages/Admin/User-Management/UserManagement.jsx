@@ -32,7 +32,9 @@ const UserManagement = () => {
 
   const handleUpdateRole = async (id, newRole) => {
     try {
-      await axiosInstance.patch(`/api/v1/user/admin/${id}/role`, { role: newRole });
+      await axiosInstance.patch(`/api/v1/user/admin/${id}/role`, {
+        role: newRole,
+      });
       toast.success("User role updated");
       fetchUsers(page, search);
     } catch (error) {
@@ -49,7 +51,9 @@ const UserManagement = () => {
       toast.success(ban ? "User banned" : "User unbanned");
       fetchUsers(page, search);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to update ban status");
+      toast.error(
+        error.response?.data?.message || "Failed to update ban status"
+      );
     }
   };
 
@@ -59,7 +63,7 @@ const UserManagement = () => {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
+      <h1 className="text-2xl font-bold text-emerald font-lora mb-6">Manage Users</h1>
       <SearchBar onSearch={handleSearch} />
       <UserTable
         users={users}
