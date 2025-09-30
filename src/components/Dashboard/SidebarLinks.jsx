@@ -12,7 +12,6 @@ export const commonLinks = [
 // Admin Links
 export const adminLinks = [
   { to: "/dashboard/user-management", label: "Manage Users", icon: Users, gradient: "from-pink-400 to-pink-600" },
-  { to: "/dashboard/site-analytics", label: "Site Analytics", icon: BarChart2, gradient: "from-yellow-400 to-orange-500" },
   { to: "/dashboard/admin/pending-products", label: "Pending Products", icon: PlusCircle, gradient: "from-teal-400 to-cyan-500" },
   { to: "/dashboard/admin/add-management", label: "Pending Ads", icon: Activity, gradient: "from-purple-400 to-indigo-500" }, // Used Activity Icon for Pending Ads
 ];

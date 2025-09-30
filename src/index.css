@@ -289,3 +289,20 @@
   html {
   scroll-behavior: smooth;
 }
+.footer-link {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 2px;
+  transition: color 0.3s ease-in-out, border-bottom 0.3s ease-in-out;
+  border-bottom: 2px solid transparent; 
+}
+
+.footer-link:hover {
+  color: #f5f5dc; 
+  border-bottom: 2px solid #f5f5dc; 
+}
+
+.footer-link:focus {
+  outline: none;
+  border-bottom: 2px solid #f5f5dc; 
+}

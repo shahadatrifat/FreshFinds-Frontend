@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { Menu, X, ChevronRight, Bell, LogOut } from "lucide-react";
 import { FaUser } from "react-icons/fa";
-import {
-  Settings,
-} from "lucide-react";
+import { Settings } from "lucide-react";
 import { getUserProfile } from "../../Services/productService";
 import {
   adminLinks,
@@ -17,7 +15,7 @@ import Logo from "../../pages/shared/Logo/Logo";
 import toast from "react-hot-toast";
 
 const LeftSidebar = () => {
-  const { user, SignOutUser, } = useAuth();
+  const { user, SignOutUser } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [hoveredItem, setHoveredItem] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -146,6 +144,7 @@ const LeftSidebar = () => {
               <button
                 onClick={async () => {
                   await SignOutUser();
+
                   toast.success("Logged out successfully");
                 }}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 text-red-600 hover:bg-red-50"

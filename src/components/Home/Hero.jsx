@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import { motion } from "framer-motion";
 import SplitText from "../ui/SplitText";
-import Carousel from "./Carousel"; // Import your carousel component
+import Carousel from "./Carousel"; 
 
 const Hero = () => {
   return (

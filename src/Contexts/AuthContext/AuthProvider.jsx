@@ -48,6 +48,7 @@ const AuthProvider = ({ children }) => {
           role: profile?.role || "customer",
           displayName: profile?.displayName || currentUser.displayName,
           photoURL: profile?.photoURL || currentUser.photoURL,
+          _id : profile?._id
         });
       } catch (err) {
         console.error("Failed to fetch user profile:", err);

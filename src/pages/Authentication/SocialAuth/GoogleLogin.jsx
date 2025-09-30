@@ -14,10 +14,8 @@ const GoogleLogin = () => {
       const result = await signInWithGoogle();
       console.log("Google user:", result.user);
 
-      // ✅ Get Firebase ID token
       const idToken = await result.user.getIdToken();
 
-      // ✅ Send to backend to store/login user
       const response = await axiosInstance.post(
         "/api/v1/user/auth",
         {}, 

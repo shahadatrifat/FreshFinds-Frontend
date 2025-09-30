@@ -1,4 +1,3 @@
-
 import { createBrowserRouter } from "react-router";
 import RootLayout from "../layouts/RootLayout";
 import Home from "../pages/home/Home";
@@ -23,109 +22,167 @@ import PendingAds from "../pages/Admin/PendingAds/PendingAds";
 import About from "../pages/About/About";
 import Support from "../pages/Support/Support";
 import UserManagement from "../pages/Admin/User-Management/UserManagement";
+import RoleRoute from "../components/Routes/RoleRoute";
+import PrivateRoute from "../components/Routes/PrivateRoute";
+import DashboardHome from "../pages/DashboardHome/DashboardHome";
+import ErrorPage from "../pages/Error/ErrorPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    Component:RootLayout,
+    Component: RootLayout,
     children: [
       {
         path: "/",
-        element: <Home></Home>
+        element: <Home></Home>,
       },
       {
         path: "/products",
-        element: <AllProducts></AllProducts>
+        element: <AllProducts></AllProducts>,
       },
       {
-        path:"/category/:categoryName",
-        element:<Category></Category>
+        path: "/category/:categoryName",
+        element: <Category></Category>,
       },
       {
         path: "/support",
-        element: <Support></Support>
+        element: <Support></Support>,
       },
       {
         path: "/about",
-        element: <About></About>
+        element: <About></About>,
       },
       {
-        path:"/apply-vendor",
-        element:<VendorApplication></VendorApplication>
+        path: "/apply-vendor",
+        element: <VendorApplication></VendorApplication>,
       },
       {
-        path:"/product/:id",
-        element:<ProductDetails></ProductDetails>
+        path: "/product/:id",
+        element: <ProductDetails></ProductDetails>,
       },
-      
-      {
-        path:"/checkout",
-        element:<Checkout></Checkout>
-      },
-      {
-        path:"/profile",
-        element:<ProfilePage></ProfilePage>
-      }
 
-      
-    ]
+      {
+        path: "/checkout",
+        element: (
+          <PrivateRoute>
+            <Checkout></Checkout>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/profile",
+        element: <PrivateRoute></PrivateRoute>,
+      },
+      {
+        path:"*",
+        element:<ErrorPage></ErrorPage>
+      }
+    ],
   },
   {
-    path:"/",
-    Component:AuthLayout,
+    path: "/",
+    Component: AuthLayout,
     children: [
       {
-        path:"/signin",
-        element:<SignIn></SignIn>
+        path: "/signin",
+        element: <SignIn></SignIn>,
       },
       {
-        path:"/signup",
-        element:<SignUp></SignUp>
-      }
-    ]
+        path: "/signup",
+        element: <SignUp></SignUp>,
+      },
+    ],
   },
   {
-    path:"/dashboard",
+    path: "/dashboard",
     Component: DashBoardLayout,
     children: [
       {
-        index:true,
-        element:<h1>Dashboard</h1>
+        index: true,
+        element: (
+          <PrivateRoute>
+            <DashboardHome></DashboardHome>
+          </PrivateRoute>
+        ),
       },
       {
-        path:"/dashboard/user-management",
-        element:<UserManagement></UserManagement>
+        path: "/dashboard/user-management",
+        element: (
+          <PrivateRoute>
+            <RoleRoute allowedRoles={["admin"]}>
+              <UserManagement></UserManagement>
+            </RoleRoute>
+          </PrivateRoute>
+        ),
       },
       {
-        path:"/dashboard/applications",
-        element:<VendorApplicationAction></VendorApplicationAction>
+        path: "/dashboard/applications",
+        element: (
+          <PrivateRoute>
+            <RoleRoute allowedRoles={["admin"]}>
+              <VendorApplicationAction></VendorApplicationAction>
+            </RoleRoute>
+          </PrivateRoute>
+        ),
       },
       {
-        path:"/dashboard/admin/pending-products",
-        element:<PendingProduct></PendingProduct>
+        path: "/dashboard/admin/pending-products",
+        element: (
+          <PrivateRoute>
+            <RoleRoute allowedRoles={["admin"]}>
+              <PendingProduct></PendingProduct>
+            </RoleRoute>
+          </PrivateRoute>
+        ),
       },
       {
-        path:"/dashboard/admin/add-management",
-        element:<PendingAds></PendingAds>
+        path: "/dashboard/admin/add-management",
+        element: (
+          <PrivateRoute>
+            <RoleRoute allowedRoles={["admin"]}>
+              <PendingAds></PendingAds>
+            </RoleRoute>
+          </PrivateRoute>
+        ),
       },
       {
-        path:"/dashboard/vendor/add-product",
-        element:<AddProduct></AddProduct>
-      },{
-        path:"/dashboard/vendor/my-products",
-        element:<MyProducts></MyProducts>
+        path: "/dashboard/vendor/add-product",
+        element: (
+          <RoleRoute allowedRoles={["vendor"]}>
+            <AddProduct></AddProduct>
+          </RoleRoute>
+        ),
       },
       {
-        path:"/dashboard/orders",
-        element:<MyOrders></MyOrders>
+        path: "/dashboard/vendor/my-products",
+        element: <PrivateRoute><RoleRoute allowedRoles={["vendor"]}><MyProducts></MyProducts></RoleRoute></PrivateRoute>,
       },
       {
-        path:"/dashboard/profile",
-        element:<ProfilePage></ProfilePage>
-      },{
-        path:"/dashboard/request-for-ad",
-        element:<AdRequestForm></AdRequestForm>
+        path: "/dashboard/request-for-ad",
+        element: (
+          <PrivateRoute>
+            <RoleRoute allowedRoles={["vendor"]}>
+              <AdRequestForm></AdRequestForm>
+            </RoleRoute>
+          </PrivateRoute>
+        ),
       },
-    ]
-  }
+      {
+        path: "/dashboard/my-orders",
+        element: (
+          <PrivateRoute>
+            <MyOrders></MyOrders>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/dashboard/profile",
+        element: (
+          <PrivateRoute>
+            <ProfilePage></ProfilePage>
+          </PrivateRoute>
+        ),
+      },
+    ],
+  },
 ]);
