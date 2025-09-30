@@ -17,30 +17,30 @@ const slides = [
   {
     id: 1,
     image: shot1,
-    title: "Exclusive Offers for a Curated Shopping Experience",
+    title: "Exclusive Shopping Offers",
     description:
-      "Indulge in luxury shopping with exclusive deals tailored just for you. Shop artisanal goods, organic produce, and premium items, all from trusted vendors, with offers you won't find anywhere else.",
+      "Shop luxury goods and exclusive deals from trusted vendors, including organic produce and artisanal items.",
   },
   {
     id: 2,
     image: shot2,
-    title: "Empower Your Business as a Vendor",
+    title: "Become a Vendor",
     description:
-      "Unlock new opportunities by becoming a vendor on our platform. Showcase your premium products and connect with a community of buyers who appreciate quality and craftsmanship.",
+      "Join our platform to showcase your premium products and connect with buyers who value quality.",
   },
   {
     id: 3,
     image: shot3,
-    title: "Discover Product Price History for Smarter Shopping",
+    title: "Track Product Price History",
     description:
-      "Stay informed with real-time price trends for your favorite products. Whether you're a savvy shopper or a vendor, gain insights into market fluctuations and make decisions that save you money.",
+      "Stay updated with real-time price trends and make smarter shopping decisions with market insights.",
   },
   {
     id: 4,
     image: shot4,
-    title: "Unleash Your Creativity with Our User-Friendly Platform",
+    title: "Unleash Your Creativity",
     description:
-      "Explore a world of creativity with our user-friendly platform. Share your ideas, connect with fellow artists, and embark on a journey of inspiration and collaboration.",
+      "Connect with like-minded artists and explore our user-friendly platform to share your creative ideas.",
   },
 ];
 

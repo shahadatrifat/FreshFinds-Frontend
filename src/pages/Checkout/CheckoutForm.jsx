@@ -6,12 +6,12 @@ import { useCart } from "../../Contexts/CartContext/cartContext";
 import useAuth from "../../Hooks/useAuth";
 import Swal from "sweetalert2";
 import lottie from "lottie-web";
-import orderConfirmed from "../../assets/lotties/Order Confirmed.json"; // Lottie animation JSON
+import orderConfirmed from "../../assets/lotties/Order Confirmed.json";
 
-const CheckoutForm = ({ totalAmount }) => {
+const CheckoutForm = ({ totalAmount, cart }) => { 
   const stripe = useStripe();
   const elements = useElements();
-  const { cart, clearCart } = useCart();
+  const { clearCart } = useCart();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -52,18 +52,18 @@ const CheckoutForm = ({ totalAmount }) => {
       }
 
       if (paymentIntent.status === "succeeded") {
-        // 4️⃣ Save order BEFORE showing success
+        // 4️⃣ Save order - Use cart prop instead of global cart
         await axiosInstance.post("/api/v1/user/order", {
           userId: user.uid,
           items: cart.map((item) => ({
-            productId: item._id,
+            productId: item.productId || item._id, // ✅ Handle both Buy Now and Cart flow
             quantity: item.quantity,
           })),
           totalAmount,
           paymentIntentId: paymentIntent.id,
         });
 
-        // 5️⃣ Clear cart
+        // 5️⃣ Clear cart (only if not Buy Now)
         clearCart();
 
         // 6️⃣ Show success modal with Lottie
@@ -86,7 +86,6 @@ const CheckoutForm = ({ totalAmount }) => {
               animationData: orderConfirmed,
             });
 
-            // Clean up when modal closes
             Swal.getPopup().addEventListener("swal:close", () => {
               lottieInstance.destroy();
             });

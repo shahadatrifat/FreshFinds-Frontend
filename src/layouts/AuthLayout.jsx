@@ -8,6 +8,7 @@ import {
   TooltipTrigger,
 } from "../components/ui/tooltip";
 import Logo from "../pages/shared/Logo/Logo";
+import Footer from "../components/Home/Footer";
 
 const AuthLayout = () => {
   const navigate = useNavigate();
@@ -17,7 +18,8 @@ const AuthLayout = () => {
   };
 
   return (
-    <div
+    <div>
+      <div
       className="min-h-screen bg-cover bg-center relative"
       style={{ backgroundImage: `url(${bg1})` }}
     >
@@ -63,6 +65,9 @@ const AuthLayout = () => {
           </motion.div>
         </div>
       </div>
+      
+    </div>
+    <Footer></Footer>
     </div>
   );
 };

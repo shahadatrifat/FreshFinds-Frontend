@@ -1,23 +1,41 @@
 import { useLocation, useNavigate } from "react-router";
 import useAuth from "../../../Hooks/useAuth";
+import axiosInstance from "../../../Hooks/useAxiosInstance";
 import React from "react";
 
 const GoogleLogin = () => {
-    const { signInWithGoogle } = useAuth();
-    const navigate = useNavigate();
+  const { signInWithGoogle } = useAuth();
+  const navigate = useNavigate();
   const location = useLocation();
-
   const from = location.state?.from?.pathname || "/";
-    const handleGoogleLogin = () => {
-      signInWithGoogle()
-        .then((res) => {
-          console.log(res.user);
-          navigate(from, { replace: true });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithGoogle();
+      console.log("Google user:", result.user);
+
+      // ✅ Get Firebase ID token
+      const idToken = await result.user.getIdToken();
+
+      // ✅ Send to backend to store/login user
+      const response = await axiosInstance.post(
+        "/api/v1/user/auth",
+        {}, 
+        {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        }
+      );
+
+      console.log("User authenticated:", response.data);
+      navigate(from, { replace: true });
+    } catch (err) {
+      console.error("Google login error:", err);
+      alert("There was an issue with Google login. Please try again.");
     }
+  };
+
   return (
     <div className="flex justify-center gap-2 mb-3">
       <button
@@ -25,7 +43,6 @@ const GoogleLogin = () => {
         variant="icon"
         className="flex items-center justify-center gap-2 px-4 py-2 bg-emerald text-beige rounded-lg shadow-lg hover:bg-gold focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all duration-300 ease-in-out transform hover:scale-105"
       >
-        {/* Google Icon */}
         <svg
           width="256"
           height="262"
@@ -51,7 +68,7 @@ const GoogleLogin = () => {
             fill="#EB4335"
           />
         </svg>
-        <span className="pl-2 text-beige font-semibold ">Google</span>
+        <span className="pl-2 text-beige font-semibold">Google</span>
       </button>
     </div>
   );

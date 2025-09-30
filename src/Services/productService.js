@@ -2,6 +2,15 @@ import axiosInstance from "../Hooks/useAxiosInstance";
 const authHeader = (firebaseUid) => ({
   headers: { Authorization: `Bearer ${firebaseUid}` },
 });
+export const getObjectId = async (firebaseUid) => {
+  try {
+    const res = await axiosInstance.get(`/api/v1/user/mongoId/${firebaseUid}`);
+    return res.data; 
+  } catch (err) {
+    console.error("Error fetching MongoDB ObjectId:", err);
+    throw err;
+  }
+};
 export const addProduct = (formData) => {
   return axiosInstance.post("/api/v1/product/add", formData, {
     headers: {
@@ -118,8 +127,10 @@ export const getUserOrders = async (userId) => {
 export const getUserProfile = async (uid) => {
   try {
     const { data } = await axiosInstance.get(`/api/v1/user/profile/${uid}`);
+    console.log("User profile fetched successfully:", data);
     return data;
   } catch (err) {
+    console.error("Error fetching user profile:", err);
     throw new Error(err.response?.data?.message || "Failed to fetch profile");
   }
 };
@@ -155,4 +166,18 @@ export const fetchActiveAds = async () => {
   const res = await axiosInstance.get("/api/v1/ad/active");
   console.log("Active ads fetched successfully:", res.data);
   return res.data;
+};
+
+// review section
+export const postProductReview = async (productId, reviewData) => {
+  try {
+    const response = await axiosInstance.post(
+      `/api/v1/product/review/${productId}`,  
+      reviewData
+    );
+    return response.data; 
+  } catch (error) {
+    console.error("Error posting review:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || "Failed to post review");
+  }
 };

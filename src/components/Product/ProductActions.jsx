@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Minus, Plus, ShoppingCart } from "lucide-react";
 import toast from "react-hot-toast";
@@ -11,33 +11,42 @@ const ProductActions = ({ product, variant = "details", isDisabled }) => {
   const { cart, addToCart } = useCart();
   const navigate = useNavigate();
 
-  /** Detect if product is already in cart */
   useEffect(() => {
-    const found = cart.find((item) => item._id === product._id);
+    const found = cart.find((item) => item.productId === product._id);
     setIsAdded(!!found);
   }, [cart, product._id]);
 
-  /** Handle Add to Cart */
   const handleAddToCart = () => {
-    addToCart(product, quantity);
+    // ✅ Include ALL necessary fields including image
+    addToCart(
+      {
+        _id: product._id,
+        productId: product._id,
+        name: product.name,
+        price: product.price,
+        productImage: product.productImage, // ✅ This field exists in your product
+      },
+      quantity
+    );
     toast.success(`${quantity} × ${product.name} added to cart`);
     setIsAdded(true);
   };
 
-  /** Handle Buy Now (Only this product, not whole cart) */
   const handleBuyNow = () => {
-    toast.success(`Proceeding to checkout for ${quantity} × ${product.name}`);
     navigate("/checkout", {
       state: {
         cart: [
           {
-            ...product,
+            _id: product._id,
+            productId: product._id,
+            name: product.name,
+            price: product.price,
+            productImage: product.productImage, // ✅ Add image here too
             quantity,
-            totalPrice: product.price * quantity, // single product total
           },
         ],
         totalAmount: product.price * quantity,
-        isBuyNow: true, // flag to identify it's a direct purchase
+        isBuyNow: true,
       },
     });
   };
@@ -45,72 +54,45 @@ const ProductActions = ({ product, variant = "details", isDisabled }) => {
   const isCard = variant === "card";
 
   return (
-    <div
-      className={`flex flex-col ${
-        isCard ? "gap-2" : "gap-6"
-      } justify-center items-start w-full`}
-    >
-      {/* Quantity + Add to Cart Row */}
-      <div
-        className={`flex gap-3 items-center w-full ${
-          isCard ? "flex-wrap" : "max-w-[400px]"
-        }`}
-      >
-        {/* Quantity Selector */}
-        <div
-          className={`flex items-center justify-center border rounded-xl overflow-hidden bg-beige shadow-sm 
-            ${isCard ? "w-[90px]" : "w-[110px]"}
-          `}
-        >
+    <div className={`flex flex-col ${isCard ? "gap-2" : "gap-6"} w-full`}>
+      {/* Quantity + Add to Cart */}
+      <div className={`flex gap-3 items-center ${isCard ? "flex-wrap" : "max-w-[400px]"}`}>
+        <div className="flex items-center justify-center border rounded-xl bg-beige shadow-sm w-[110px]">
           <button
             onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-            className="p-2 hover:bg-offwhite transition-colors disabled:opacity-50 flex items-center justify-center"
             disabled={quantity <= 1 || isDisabled}
+            className="px-3 py-2 hover:bg-gray-100 rounded-l-xl disabled:opacity-50"
           >
-            <Minus size={14} />
+            <Minus className="w-4 h-4" />
           </button>
-          <span className="px-3 text-center font-medium text-emerald-800 min-w-[30px]">
-            {quantity}
-          </span>
+          <span className="px-3 font-semibold">{quantity}</span>
           <button
             onClick={() => setQuantity((q) => q + 1)}
-            className="p-2 hover:bg-offwhite transition-colors flex items-center justify-center"
             disabled={isDisabled}
+            className="px-3 py-2 hover:bg-gray-100 rounded-r-xl disabled:opacity-50"
           >
-            <Plus size={14} />
+            <Plus className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Add to Cart Button */}
         <Button
           onClick={handleAddToCart}
           disabled={isAdded || isDisabled}
-          className={`flex items-center justify-center gap-2 rounded-xl font-medium shadow-md transition-all duration-300 
-            ${
-              isAdded || isDisabled
-                ? "bg-gray-400 cursor-not-allowed text-off"
-                : "bg-emerald-600 hover:bg-emerald-700 text-beige"
-            }
-            ${isCard ? "px-3 py-2 text-sm" : "px-6 py-3 text-base"}
-            flex-1
-          `}
+          className={`flex-1 ${
+            isAdded
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-emerald-600 hover:bg-emerald-700 text-beige"
+          }`}
         >
-          <ShoppingCart size={isCard ? 16 : 20} />
+          <ShoppingCart className="w-4 h-4 mr-2" />
           {isAdded ? "Added" : "Add to Cart"}
         </Button>
       </div>
 
-      {/* Buy Now Button */}
       <Button
         onClick={handleBuyNow}
         disabled={isDisabled}
-        className={`bg-[#DAA520] text-beige rounded-xl hover:bg-[#B8860B] hover:text-[#FFF8DC] shadow-md transition-all duration-300
-          ${
-            isCard
-              ? "px-3 py-2 text-sm w-full"
-              : "w-full max-w-[400px] py-3 text-base"
-          }
-        `}
+        className="bg-[#DAA520] hover:bg-[#B8860B] text-beige rounded-xl w-full max-w-[400px] py-3"
       >
         Buy Now
       </Button>

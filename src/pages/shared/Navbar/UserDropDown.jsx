@@ -11,7 +11,7 @@ import {
 import { RiDashboardHorizontalLine } from "react-icons/ri";
 import { FaRegCircleUser, FaStore } from "react-icons/fa6";
 import { IoLogOutOutline } from "react-icons/io5";
-import { BadgeInfo } from "lucide-react";
+import { BadgeInfo, User } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../../Hooks/useAuth";
 import { getUserProfile } from "../../../Services/productService";
@@ -71,12 +71,12 @@ const UserDropdown = ({ handleSignout }) => {
                   alt="User Avatar"
                   className="w-10 h-10 rounded-full border-2 border-beige object-cover"
                 />
-                <div>
+                <div className=" space-y-1">
                   <p className="text-sm font-semibold text-beige">
                     {profile?.displayName || "No Name"}
                   </p>
                   <p className="text-xs text-beige">{profile?.email}</p>
-                  <p className="text-xs text-beige capitalize">
+                  <p className="text-xs flex items-center text-beige capitalize"><User size={16}></User>
                     {profile?.role}
                   </p>
                 </div>

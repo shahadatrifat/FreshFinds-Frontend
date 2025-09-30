@@ -4,6 +4,7 @@ import { fetchPublicProducts } from "../../Services/productService";
 import toast from "react-hot-toast";
 import ProductRow from "./ProductRow";
 import SkeletonCardLoader from "../shared/loaders/SkeletonCardLoader";
+import EmptyState from "../shared/EmptyState";
 
 const categories = [
   { value: "meat", label: "Meat" },
@@ -28,7 +29,6 @@ const categories = [
 ];
 
 const AllProducts = () => {
-  // Create queries dynamically for each category
   const categoryQueries = useQueries({
     queries: categories.map((cat) => ({
       queryKey: ["products", cat.value],
@@ -63,6 +63,7 @@ const AllProducts = () => {
                 <div className="text-center">
                   <p className="text-gray-500">
                     No products available in {cat.label}.
+                    <EmptyState></EmptyState>
                   </p>
                 </div>
               ) : (

@@ -1,54 +1,52 @@
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router";
-import { useEffect, useState } from "react";
+import { Menu, X, ChevronRight, Bell, LogOut } from "lucide-react";
+import { FaUser } from "react-icons/fa";
 import {
-  Home,
-  Users,
-  Activity,
-  PlusCircle,
-  BarChart2,
-  LogOut,
   Settings,
-  X,
-  Menu,
-  ChevronRight,
-  Bell,
-  ShoppingCart,
-  FileText,
-  Package,
-  Grid,
-  BarChart,
 } from "lucide-react";
+import { getUserProfile } from "../../Services/productService";
+import {
+  adminLinks,
+  userLinks,
+  vendorLinks,
+  commonLinks,
+} from "./SidebarLinks";
 import useAuth from "../../Hooks/useAuth";
 import Logo from "../../pages/shared/Logo/Logo";
-import { getUserProfile } from "../../Services/productService";
 import toast from "react-hot-toast";
 
 const LeftSidebar = () => {
   const { user, SignOutUser, } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [hoveredItem, setHoveredItem] = useState(null);
+  const [profile, setProfile] = useState(null);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const closeSidebar = () => setSidebarOpen(false);
 
   const isActive = (path) => window.location.pathname === path;
 
-  // profile
-
-  const [profile, setProfile] = useState(null);
-
+  // Fetch profile
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const data = await getUserProfile(user?.uid);
         setProfile(data);
-       
       } catch (err) {
         toast.error(err.message);
-      } 
+      }
     };
     if (user?.uid) fetchProfile();
   }, [user?.uid]);
+
+  // Build links based on role
+  let roleLinks = [];
+  if (profile?.role === "admin") roleLinks = adminLinks;
+  if (profile?.role === "vendor") roleLinks = vendorLinks;
+  if (profile?.role === "user") roleLinks = userLinks;
+
+  const allLinks = [...commonLinks, ...roleLinks];
 
   return (
     <>
@@ -70,7 +68,7 @@ const LeftSidebar = () => {
             <Bell size={18} className="text-charcoal" />
           </button>
           <div className="w-9 h-9 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center text-sm font-medium text-beige shadow-sm ring-2 ring-[#f5f5dc]">
-            {user?.displayName || "U"}
+            {user?.displayName?.charAt(0) || "U"}
           </div>
         </div>
       </header>
@@ -104,135 +102,30 @@ const LeftSidebar = () => {
           {/* Logo */}
           <div className="mb-8">
             <Link to="/" onClick={closeSidebar} className="block group">
-              <div className="flex flex-col items-start gap-2 mb-2">
-                <div className="flex flex-col items-center">
-                  <Logo />
-                  <p className="text-xs text-gray-500 font-medium">
-                     Dashboard
-                  </p>
-                </div>
+              <div className="flex flex-col items-center">
+                <Logo />
+                <p className="text-xs text-gray-500 font-medium">Dashboard</p>
               </div>
             </Link>
           </div>
 
           {/* Navigation */}
-           <nav className="space-y-3 flex-1">
-            <SidebarLink
-              to="/dashboard"
-              icon={<Home size={18} />}
-              active={isActive("/dashboard")}
-              onClick={closeSidebar}
-              onHover={setHoveredItem}
-              id="overview" // Unique ID for the Overview link
-              hoveredItem={hoveredItem}
-              gradient="from-emerald-500 to-emerald-600"
-            >
-              Overview
-            </SidebarLink>
-
-            <SidebarLink
-              to="/dashboard/admin/user-management"
-              icon={<Users size={18} />}
-              active={isActive("/dashboard/admin/user-management")}
-              onClick={closeSidebar}
-              onHover={setHoveredItem}
-              id="users" // Unique ID for the Users link
-              hoveredItem={hoveredItem}
-              gradient="from-emerald-500 to-emerald-600"
-            >
-              User Management
-            </SidebarLink>
-
-            <SidebarLink
-              to="/dashboard/orders"
-              icon={<ShoppingCart size={18} />}
-              active={isActive("/dashboard/orders")}
-              onClick={closeSidebar}
-              onHover={setHoveredItem}
-              id="orders" // Unique ID for the Orders link
-              hoveredItem={hoveredItem}
-              gradient="from-emerald-500 to-emerald-600"
-            >
-              My Orders
-            </SidebarLink>
-
-            <SidebarLink
-              to="/dashboard/admin/applications"
-              icon={<FileText size={18} />} // Updated icon for applications
-              active={isActive("/dashboard/admin/applications")}
-              onClick={closeSidebar}
-              onHover={setHoveredItem}
-              id="applications" // Unique ID for the Applications link
-              hoveredItem={hoveredItem}
-              gradient="from-emerald-500 to-purple-600"
-            >
-              Pending Applications
-            </SidebarLink>
-
-            <SidebarLink
-              to="/dashboard/admin/pending-products"
-              icon={<Package size={18} />} // Updated icon for pending products
-              active={isActive("/dashboard/admin/pending-products")}
-              onClick={closeSidebar}
-              onHover={setHoveredItem}
-              id="pending-products" // Unique ID for the Pending Products link
-              hoveredItem={hoveredItem}
-              gradient="from-emerald-500 to-purple-600"
-            >
-              Pending products
-            </SidebarLink>
-
-            <SidebarLink
-              to="/dashboard/vendor/add-product"
-              icon={<PlusCircle size={18} />}
-              active={isActive("/dashboard/vendor/add-product")}
-              onClick={closeSidebar}
-              onHover={setHoveredItem}
-              id="add-product" // Unique ID for the Add Product link
-              hoveredItem={hoveredItem}
-              gradient="from-emerald-500 to-yellow-600"
-            >
-              Add Product
-            </SidebarLink>
-
-            <SidebarLink
-              to="/dashboard/vendor/my-products"
-              icon={<Grid size={18} />} // Updated icon for managing products
-              active={isActive("/dashboard/vendor/my-products")}
-              onClick={closeSidebar}
-              onHover={setHoveredItem}
-              id="my-products" // Unique ID for the My Products link
-              hoveredItem={hoveredItem}
-              gradient="from-emerald-500 to-yellow-600"
-            >
-              My Products
-            </SidebarLink>
-
-            <SidebarLink
-              to="/dashboard/request-for-ad"
-              icon={<Activity size={18} />}
-              active={isActive("/dashboard/request-for-ad")}
-              onClick={closeSidebar}
-              onHover={setHoveredItem}
-              id="request-for-ad" // Unique ID for the Activity link
-              hoveredItem={hoveredItem}
-              gradient="from-indigo-500 to-indigo-600"
-            >
-              Request for Ad
-            </SidebarLink>
-
-            <SidebarLink
-              to="/dashboard/admin/add-management"
-              icon={<BarChart size={18} />} // Updated icon for performance
-              active={isActive("/dashboard/admin/add-management")}
-              onClick={closeSidebar}
-              onHover={setHoveredItem}
-              id="performance" // Unique ID for the Performance link
-              hoveredItem={hoveredItem}
-              gradient="from-cyan-500 to-cyan-600"
-            >
-              Add Management
-            </SidebarLink>
+          <nav className="space-y-3 flex-1">
+            {allLinks.map(({ to, label, icon: Icon, gradient }, idx) => (
+              <SidebarLink
+                key={idx}
+                to={to}
+                icon={<Icon size={18} />}
+                active={isActive(to)}
+                onClick={closeSidebar}
+                onHover={setHoveredItem}
+                id={label}
+                hoveredItem={hoveredItem}
+                gradient={gradient}
+              >
+                {label}
+              </SidebarLink>
+            ))}
           </nav>
 
           {/* Bottom Section */}
@@ -244,23 +137,22 @@ const LeftSidebar = () => {
                 active={isActive("/dashboard/profile")}
                 onClick={closeSidebar}
                 onHover={setHoveredItem}
-                id="profile" // Unique ID for the Profile link
+                id="profile"
                 hoveredItem={hoveredItem}
                 gradient="from-emerald-500 to-emerald-600"
               >
                 Profile
               </SidebarLink>
-              <SidebarLink
-                to="/logout"
-                icon={<LogOut size={18} />}
-                onClick={closeSidebar}
-                onHover={setHoveredItem}
-                id="logout" // Unique ID for the Logout link
-                hoveredItem={hoveredItem}
-                gradient="from-red-500 to-red-600"
+              <button
+                onClick={async () => {
+                  await SignOutUser();
+                  toast.success("Logged out successfully");
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 text-red-600 hover:bg-red-50"
               >
+                <LogOut size={18} />
                 Logout
-              </SidebarLink>
+              </button>
             </div>
 
             {/* Footer User Placeholder */}
@@ -285,7 +177,6 @@ const LeftSidebar = () => {
                   </p>
                 </div>
 
-                {/* Chevron */}
                 <ChevronRight size={16} className="text-gray-400" />
               </div>
             </div>
@@ -343,14 +234,14 @@ const SidebarLink = ({
 
       {active && (
         <div className="ml-auto">
-          <div className="w-2 h-2 bg-beige rounded-full animate-pulse  " />
+          <div className="w-2 h-2 bg-beige rounded-full animate-pulse" />
         </div>
       )}
 
       {!active && isHovered && (
         <ChevronRight
           size={14}
-          className="ml-auto text-emerald-500 group-hover:text-emerald-500 transform transition-transform duration-300 group-hover:translate-x-1"
+          className="ml-auto text-emerald-500 transform transition-transform duration-300 group-hover:translate-x-1"
         />
       )}
     </Link>

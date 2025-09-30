@@ -19,8 +19,8 @@ const Checkout = () => {
 
   // Calculate total
   const totalAmount = isBuyNow
-    ? buyNowTotal
-    : globalCart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  ? buyNowTotal
+  : globalCart?.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
     <div className="max-w-3xl mx-auto p-6">

@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react";
-import ProductHeader from "./ProductHeader";
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProductById } from "../../Services/productService";
 import toast from "react-hot-toast";
 import CartLoaderFull from "../shared/loaders/CartLoaderFull";
-import ProductDescription from "./ProductDescription";
 import ProductReviews from "./ProductReviews";
 import RelatedProducts from "./RelatedProducts";
-import { Button } from "../../components/ui/button";
 import { ShoppingCart, ChevronLeft } from "lucide-react";
 import ProductActions from "../../components/Product/ProductActions";
 import PriceHistory from "./PriceHistory";
@@ -21,6 +18,7 @@ const ProductDetails = () => {
   });
 
   const product = data?.data;
+  console.log(product);
   const [cart, setCart] = useState([]);
 
   useEffect(() => {

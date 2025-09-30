@@ -9,6 +9,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { auth } from "../../Firebase/firebase.init";
+import { getUserProfile } from "../../Services/productService";
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -36,13 +37,30 @@ const AuthProvider = ({ children }) => {
   }
   // Function to check if a user is logged in
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      console.log("user in auth provider", currentUser);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
+  const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    setLoading(true);
+    if (currentUser) {
+      try {
+        const profile = await getUserProfile(currentUser.uid);
+
+        setUser({
+          ...currentUser,
+          role: profile?.role || "customer",
+          displayName: profile?.displayName || currentUser.displayName,
+          photoURL: profile?.photoURL || currentUser.photoURL,
+        });
+      } catch (err) {
+        console.error("Failed to fetch user profile:", err);
+        setUser({ ...currentUser, role: "customer" }); 
+      }
+    } else {
+      setUser(null);
+    }
+    setLoading(false);
+  });
+
+  return () => unsubscribe();
+}, []);
 
   const authInfo = {
     createUser,

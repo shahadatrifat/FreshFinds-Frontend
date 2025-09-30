@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import Swal from "sweetalert2";
 
 const CartContext = createContext();
 
@@ -22,9 +21,7 @@ export const CartProvider = ({ children }) => {
       localStorage.setItem("cart", JSON.stringify(cart));
     };
 
-    const debounceSave = setTimeout(saveCart, 300); // 300ms debounce delay
-
-    // Cleanup on unmount or cart change
+    const debounceSave = setTimeout(saveCart, 300);
     return () => clearTimeout(debounceSave);
   }, [cart]);
 
@@ -33,50 +30,65 @@ export const CartProvider = ({ children }) => {
       .reduce((total, item) => total + item.price * item.quantity, 0)
       .toFixed(2);
   };
-  // Add product with custom quantity
+
+  // ✅ FIXED: Add product with custom quantity
   const addToCart = (product, quantity = 1) => {
     setCart((prevCart) => {
-      const exists = prevCart.find((item) => item._id === product._id);
+      // ✅ Check using productId OR _id (handles both cases)
+      const productId = product.productId || product._id;
+      const exists = prevCart.find(
+        (item) => (item.productId || item._id) === productId
+      );
 
       if (exists) {
         toast.success("Increased quantity!");
         return prevCart.map((item) =>
-          item._id === product._id
-            ? { ...item, quantity: item.quantity + quantity } // ✅ FIX: quantity added properly
+          (item.productId || item._id) === productId
+            ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       } else {
         toast.success(`${product.name} added to cart`);
-        return [...prevCart, { ...product, quantity }];
+        // ✅ Ensure consistent structure with both _id and productId
+        return [
+          ...prevCart,
+          {
+            ...product,
+            _id: productId,
+            productId: productId,
+            quantity,
+          },
+        ];
       }
     });
   };
 
-  // Remove product from cart
+  // ✅ FIXED: Remove product from cart
   const removeFromCart = (id) => {
-  setCart((prevCart) => {
-    const newCart = prevCart.filter((item) => item._id !== id);
-   
-    return newCart;
-  });
-  toast.error("Item removed from cart");
-};
+    setCart((prevCart) => {
+      const newCart = prevCart.filter(
+        (item) => (item.productId || item._id) !== id
+      );
+      return newCart;
+    });
+    toast.error("Item removed from cart");
+  };
 
-  // Update quantity
+  // ✅ FIXED: Update quantity
   const updateQuantity = (id, qty) => {
     if (qty <= 0) return removeFromCart(id);
     setCart((prevCart) =>
       prevCart.map((item) =>
-        item._id === id ? { ...item, quantity: qty } : item
+        (item.productId || item._id) === id ? { ...item, quantity: qty } : item
       )
     );
   };
 
   // Clear entire cart
   const clearCart = () => {
-  setCart([]);
-  localStorage.removeItem("cart");
-};
+    setCart([]);
+    localStorage.removeItem("cart");
+  };
 
   return (
     <CartContext.Provider

@@ -40,14 +40,18 @@ const SignIn = () => {
       const idToken = await firebaseUser.user.getIdToken();
       console.log("id token", idToken);
       // send the response to the backend
-      const response = await axiosInstance.post("/api/v1/user/signin", {
-        userId: firebaseUser.user?.uid,
-        idToken,
-      },{
-        headers: {
-          Authorization: `Bearer ${idToken}`,
+      const response = await axiosInstance.post(
+        "/api/v1/user/auth",
+        {
+          userId: firebaseUser.user?.uid,
+          idToken,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
         }
-      });
+      );
       console.log("User signed in successfully", response.data);
       navigate(from, { replace: true });
       reset();
@@ -55,8 +59,6 @@ const SignIn = () => {
       console.log(err);
       alert("There was an issue during sign-in. Please try again.");
     }
-
-  
   };
 
   return (

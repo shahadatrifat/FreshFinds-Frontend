@@ -39,7 +39,7 @@ const SignUp = () => {
   // Handle form submission
   // Handle form submission
   const onSubmit = async (data) => {
-    setLoading(true); // Enable loader when form is being submitted
+    setLoading(true);
 
     try {
       console.log("Form submitted successfully", data, file);
@@ -55,24 +55,19 @@ const SignUp = () => {
       // Step 3: Prepare FormData for backend (ONLY non-sensitive fields)
       const displayName = `${data.firstName} ${data.lastName}`;
       const formData = new FormData();
-      formData.append("displayName", displayName); // safe to send
+      formData.append("displayName", displayName);
       if (file) {
-        formData.append("photoURL", file); // profile image if available
+        formData.append("photoURL", file);
       }
 
       console.log("FormData before sending:", [...formData.entries()]);
 
-      // ✅ Step 4: Send request to backend with Firebase token in headers
-      const response = await axiosInstance.post(
-        "/api/v1/user/signup",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${idToken}`, // Secure header
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axiosInstance.post("/api/v1/user/auth", formData, {
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       console.log("User registered successfully:", response.data);
 
@@ -83,7 +78,7 @@ const SignUp = () => {
       console.error("Error during sign-up:", err.response?.data || err.message);
       alert("There was an issue during sign-up. Please try again.");
     } finally {
-      setLoading(false); // Disable loader after the process
+      setLoading(false);
     }
   };
 

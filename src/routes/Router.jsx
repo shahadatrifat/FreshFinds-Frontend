@@ -93,11 +93,11 @@ export const router = createBrowserRouter([
         element:<h1>Dashboard</h1>
       },
       {
-        path:"/dashboard/admin/user-management",
+        path:"/dashboard/user-management",
         element:<UserManagement></UserManagement>
       },
       {
-        path:"/dashboard/admin/applications",
+        path:"/dashboard/applications",
         element:<VendorApplicationAction></VendorApplicationAction>
       },
       {

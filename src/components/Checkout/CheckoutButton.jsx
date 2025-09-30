@@ -1,11 +1,13 @@
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { ShoppingCart } from "lucide-react";
 
-const CheckoutButton = ({ disabled }) => {
+const CheckoutButton = ({ disabled, items, totalAmount, isBuyNow }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate("/checkout");
+    navigate("/checkout", {
+      state: { items, totalAmount, isBuyNow },
+    });
   };
 
   return (
