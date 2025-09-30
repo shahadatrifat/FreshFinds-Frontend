@@ -51,7 +51,7 @@ const ProfilePage = () => {
         photoURL,
       });
 
-      setProfile(updated.user); // update local state with backend response
+      setProfile(updated.user); 
       toast.success("Profile updated successfully!");
     } catch (err) {
       toast.error(err.message || "Failed to update profile");
@@ -64,7 +64,7 @@ const ProfilePage = () => {
   if (!profile) return <p>No profile data found.</p>;
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-offwhite rounded-lg shadow-md">
+    <div className="max-w-3xl mx-auto mt-10 mb-10 p-6 bg-offwhite rounded-lg shadow-md">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-6">

@@ -82,7 +82,7 @@ const DashboardHome = () => {
 
   return (
     <div className="space-y-6 p-6">
-      <h2 className="text-2xl font-semibold">Dashboard Overview</h2>
+      <h2 className="text-2xl font-lora text-emerald font-semibold">Dashboard Overview</h2>
 
       {/* Render charts and stats cards based on role */}
       {user.role === "admin" && <AdminChart stats={stats} />}
