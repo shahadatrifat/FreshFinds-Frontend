@@ -92,7 +92,7 @@ const CheckoutForm = ({ totalAmount, cart }) => {
           },
         }).then((result) => {
           if (result.isConfirmed) {
-            window.location.href = "/dashboard/orders";
+            window.location.href = "/dashboard/my-orders";
           }
         });
       }

@@ -63,72 +63,101 @@ const MyOrders = () => {
   if (!orders.length) return <div className="text-center py-10">No orders yet.</div>;
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
-      <h2 className="text-3xl font-semibold text-emerald-700 mb-6">My Orders</h2>
+     <div className="max-w-7xl mx-auto p-6 space-y-6">
+      <h2 className="text-3xl font-semibold text-emerald font-lora mb-6">My Orders</h2>
 
+      {/* Loop through orders */}
       {orders.map((order) => (
-        <div key={order._id} className="bg-white rounded-xl shadow-lg p-6 space-y-4 border border-gray-200">
-          <div className="flex justify-between items-center mb-3">
-            <p className="text-sm text-gray-500">Order ID: {order.orderId}</p>
-            <p className={`text-sm font-semibold ${order.status === "pending" ? "text-green-500" : "text-green-600"}`}>
-              Paid
+        <div
+  key={order._id}
+  className="bg-white rounded-xl shadow-lg p-4 sm:p-6 space-y-4 border border-gray-200"
+>
+  {/* Order Header */}
+  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-3 mb-3">
+    <p className="text-xs sm:text-sm text-gray-500">
+      Order ID: {order.orderId}
+    </p>
+    <p
+      className={`text-xs sm:text-sm font-semibold ${
+        order.status === "pending" ? "text-green-500" : "text-green-600"
+      }`}
+    >
+      {order.status === "pending" ? "Paid" : "Paid"}
+    </p>
+  </div>
+
+  {/* Order Items */}
+  <div className="space-y-4">
+    {order.orderItems.map((item) => (
+      <div
+        key={item._id}
+        className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-6"
+      >
+        {/* Product Image and Info */}
+        <div className="flex items-center gap-3 w-full">
+          <Link to={`/product/${item.productId?._id}`}>
+            <img
+              src={item.productId?.productImage || "/default-image.jpg"}
+              alt={item.productId?.name}
+              className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg shadow-sm"
+            />
+          </Link>
+          <div className="flex-1">
+            <Link to={`/product/${item.productId?._id}`}>
+              <p className="font-medium text-charcoal hover:underline text-sm sm:text-base">
+                {item.productId?.name}
+              </p>
+            </Link>
+            <p className="text-xs sm:text-sm text-gray-500">
+              Qty: {item.quantity}
             </p>
           </div>
-
-          <div className="space-y-3">
-            {order.orderItems.map((item) => (
-              <div key={item._id} className="flex justify-between items-center space-x-4 sm:space-x-6">
-                {/* Product Image and Info */}
-                <div className="flex gap-4 items-center w-full">
-                  <Link to={`/product/${item.productId?._id}`}><img
-                    src={item.productId?.productImage || "/default-image.jpg"}
-                    alt={item.productId?.name}
-                    className="w-16 h-16 object-cover rounded-lg shadow-sm"
-                  /></Link>
-                  <div className="flex-1">
-                    <Link to={`/product/${item.productId?._id}`}><p className="font-medium text-charcoal hover:underline">{item.productId?.name}</p></Link>
-                    <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
-                  </div>
-                </div>
-
-                {/* Price Column */}
-                <p className="font-semibold text-charcoal text-right w-[120px] sm:w-[150px]">
-                  ${item.productId?.price.toFixed(2)}
-                </p>
-
-                {/* Rate & Review Button */}
-                {reviewedProducts.includes(item.productId._id) ? (
-                  <Button
-                    variant="link"
-                    className="text-gray-400 hover:text-gray-500 font-medium flex items-center gap-2"
-                    disabled
-                  >
-                    <FaStar className="text-yellow-400" />
-                    Reviewed
-                  </Button>
-                ) : (
-                  <Button
-                    variant="link"
-                    className="text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-2"
-                    onClick={() => handleOpenReviewDialog(item.productId)}
-                  >
-                    <FaStar className="text-yellow-400" />
-                    Rate & Review
-                  </Button>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-3 flex justify-between font-bold">
-            <span className="text-charcoal">Total:</span>
-            <span className="text-emerald">${order.totalAmount.toFixed(2)}</span>
-          </div>
-
-          <p className="text-xs text-gray-400 mt-2">
-            Ordered on {new Date(order.orderDate).toLocaleDateString()}
-          </p>
         </div>
+
+        {/* Price + Button stacked on mobile */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 sm:gap-4 w-full sm:w-auto text-right">
+          <p className="font-semibold text-charcoal text-sm sm:text-base">
+            ${item.productId?.price.toFixed(2)}
+          </p>
+
+          {reviewedProducts.includes(item.productId._id) ? (
+            <Button
+              variant="link"
+              className="text-gray-400 hover:text-gray-500 font-medium flex items-center gap-1 sm:gap-2 text-sm"
+              disabled
+            >
+              <FaStar className="text-yellow-400" />
+              Reviewed
+            </Button>
+          ) : (
+            <Button
+              variant="link"
+              className="text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1 sm:gap-2 text-sm"
+              onClick={() => handleOpenReviewDialog(item.productId)}
+            >
+              <FaStar className="text-yellow-400" />
+              Rate & Review
+            </Button>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+
+  {/* Order Total */}
+  <div className="mt-3 flex flex-col sm:flex-row sm:justify-between sm:items-center font-bold gap-1 sm:gap-0">
+    <span className="text-charcoal text-sm sm:text-base">Total:</span>
+    <span className="text-emerald text-sm sm:text-base">
+      ${order.totalAmount.toFixed(2)}
+    </span>
+  </div>
+
+  {/* Order Date */}
+  <p className="text-xs text-gray-400 mt-2">
+    Ordered on {new Date(order.orderDate).toLocaleDateString()}
+  </p>
+</div>
+
       ))}
 
       {/* Rating and Review Dialog */}
