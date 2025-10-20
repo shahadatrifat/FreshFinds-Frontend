@@ -15,8 +15,9 @@ const FeaturedGrid = ({ limit = 8 }) => {
   });
 
   const products = data?.data || [];
-  // sort by createdAt desc and take limit
-  const featured = [...products].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, limit);
+  const featured = [...products]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, limit);
 
   return (
     <section className="py-6">
@@ -26,9 +27,7 @@ const FeaturedGrid = ({ limit = 8 }) => {
       </div>
 
       {isLoading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4  gap-4">
-          {[...Array(limit)].map((_, i) => <SkeletonCardLoader key={i} />)}
-        </div>
+        <SkeletonCardLoader limit={limit} />
       ) : isError ? (
         <div className="text-center text-red-500">Failed to load featured products.</div>
       ) : (
