@@ -53,11 +53,7 @@ const Hero = () => {
                   </button>
                 </Link>
 
-                <Link to="/markets" className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border-2 border-emerald-600 text-emerald-600 px-6 py-3 rounded-xl hover:bg-emerald-50 transition ease-in-out duration-300 text-sm sm:text-base">
-                    Explore Markets
-                  </button>
-                </Link>
+                
               </div>
 
               {/* Small Info Section */}
