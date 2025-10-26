@@ -56,7 +56,7 @@ const Navbar = () => {
       transition={{ duration: 0.5 }}
       className="bg-emerald w-full sticky top-0 z-50"
     >
-      <div className="mx-auto px-6 flex items-center justify-between lg:justify-between w-full">
+      <div className="container mx-auto px-6  flex items-center justify-between lg:justify-between w-full">
         {/* Mobile Menu Button */}
         <div className="lg:hidden flex items-center">
           <button
