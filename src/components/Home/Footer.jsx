@@ -2,8 +2,10 @@ import React from 'react';
 import { Link } from 'react-router';
 import { motion } from 'framer-motion';
 import { FaFacebook, FaInstagram, FaTwitter, FaLinkedin } from 'react-icons/fa';
-import { Mail, Phone, MapPin, Send, Heart } from 'lucide-react';
+import { Mail, Phone, MapPin, Heart, ExternalLink } from 'lucide-react';
 import Logo from '../../pages/shared/Logo/Logo';
+
+
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -70,21 +72,6 @@ const Footer = () => {
                 </motion.a>
               ))}
             </div>
-
-            {/* Newsletter */}
-            <div className="mt-6">
-              <p className="text-sm font-medium mb-3">Subscribe to our newsletter</p>
-              <div className="flex gap-2">
-                <input
-                  type="email"
-                  placeholder="Your email"
-                  className="flex-1 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-beige placeholder-beige/60 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                />
-                <button className="p-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg transition-colors">
-                  <Send className="w-5 h-5 text-white" />
-                </button>
-              </div>
-            </div>
           </motion.div>
 
           {/* Shop Links */}
@@ -131,7 +118,7 @@ const Footer = () => {
             </ul>
           </motion.div>
 
-          {/* Legal Links */}
+          {/* Legal & Contact */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -179,12 +166,21 @@ const Footer = () => {
               © {currentYear} FreshFinds. All rights reserved.
             </p>
 
-            {/* Made with love */}
+            {/* Developer Credit */}
             <p className="text-beige/80 text-sm flex items-center gap-2">
-              Made with <Heart className="w-4 h-4 text-red-400 fill-current" /> for local communities
+              Made with <Heart className="w-4 h-4 text-red-400 fill-current" /> by{' '}
+              <a
+                href="https://shahadatrifat.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-emerald-300 font-semibold inline-flex items-center gap-1 transition-colors group"
+              >
+                Shahadat Rifat
+                <ExternalLink className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </a>
             </p>
 
-            {/* Payment methods or badges */}
+            {/* Payment methods */}
             <div className="flex items-center gap-4">
               <span className="text-beige/60 text-xs">Secure Payment</span>
               <div className="flex gap-2">
