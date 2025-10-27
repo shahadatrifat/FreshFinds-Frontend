@@ -14,7 +14,7 @@ const categories = [
 
 const CategoryGrid = () => {
   return (
-    <section className="py-16 lg:py-20 bg-gradient-to-b from-white to-beige/30">
+    <section className="py-16 lg:py-20 rounded-2xl bg-gradient-to-b from-beige/20 via-white to-beige/10">
       <div className="container mx-auto px-4 sm:px-6 md:px-8">
         {/* Header */}
         <motion.div
@@ -79,7 +79,7 @@ const CategoryGrid = () => {
 
                 {/* Content */}
                 <div className="absolute inset-0 flex flex-col justify-end p-4">
-                  <h3 className="text-lg md:text-xl font-bold text-white group-hover:text-emerald-300 transition-colors duration-300 mb-1">
+                  <h3 className="text-lg md:text-xl font-bold text-beige group-hover:text-emerald-300 transition-colors duration-300 mb-1">
                     {category.label}
                   </h3>
                   <p className="text-xs text-white/80 group-hover:text-white transition-colors">

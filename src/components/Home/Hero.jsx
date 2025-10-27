@@ -78,14 +78,14 @@ const Hero = () => {
               className="flex flex-col sm:flex-row gap-4 mt-8"
             >
               <Link to="/products" className="group">
-                <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-emerald-700 transform hover:scale-105 transition-all duration-300 shadow-sm hover:shadow-md">
+                <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-600 text-beige px-6 py-4 rounded-xl font-semibold hover:bg-emerald-700 transform hover:scale-102 transition-all duration-300  hover:shadow-md">
                   <ShoppingBag className="w-5 h-5" />
                   <span>Shop Now</span>
                 </button>
               </Link>
 
               <Link to="/about" className="group">
-                <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white text-emerald-700 border-2 border-emerald-600 px-8 py-4 rounded-xl font-semibold hover:bg-emerald-50 transform hover:scale-105 transition-all duration-300 shadow-sm">
+                <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-beige text-emerald-600 border-2 border-emerald-600 px-6 py-4 rounded-xl font-semibold  transform hover:scale-102 transition-all duration-300 ">
                   <span>Learn More</span>
                 </button>
               </Link>
@@ -140,31 +140,7 @@ const Hero = () => {
           </motion.div>
         </div>
 
-        {/* Bottom Stats Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 lg:mt-24"
-        >
-          {[
-            { number: "500+", label: "Products" },
-            { number: "100+", label: "Local Vendors" },
-            { number: "10k+", label: "Happy Customers" },
-            { number: "4.9★", label: "Rating" }
-          ].map((stat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1.3 + index * 0.1 }}
-              className="text-center p-6 bg-white rounded-xl border border-gray-100"
-            >
-              <p className="text-3xl font-bold text-emerald-700 mb-1">{stat.number}</p>
-              <p className="text-sm text-gray-600">{stat.label}</p>
-            </motion.div>
-          ))}
-        </motion.div>
+       
       </div>
     </section>
   );

@@ -41,7 +41,7 @@ const HomepageBanner = () => {
 
   if (!ads.length) {
     return (
-      <section className="py-16 bg-gradient-to-b from-beige/20 to-white">
+      <section className="py-16 rounded-2xl bg-gradient-to-b from-beige/20 via-white to-beige/10">
         <div className="max-w-7xl mx-auto px-4">
           <div className="bg-white border-2 border-dashed border-gray-300 rounded-2xl p-12 text-center">
             <Tag className="w-16 h-16 mx-auto text-gray-400 mb-4" />
@@ -54,7 +54,7 @@ const HomepageBanner = () => {
   }
 
   return (
-    <section className="relative py-16 lg:py-20 bg-gradient-to-b from-white via-beige/10 to-white">
+    <section className="relative py-16 lg:py-20 bg-gradient-to-b from-beige/20 via-white to-beige/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
