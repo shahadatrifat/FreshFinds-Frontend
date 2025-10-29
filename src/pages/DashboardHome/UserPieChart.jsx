@@ -60,7 +60,7 @@ const UserCharts = ({ stats }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.2 }}
-            className="p-4 bg-white border rounded-xl shadow-lg text-center hover:shadow-xl transition-shadow"
+            className="p-4 bg-white border rounded-xl shadow text-center hover:shadow-md transition-shadow"
           >
             <h4 className="text-gray-500 text-sm">{card.label}</h4>
             <p className={`text-2xl font-bold ${card.color}`}>{card.value}</p>
@@ -73,7 +73,7 @@ const UserCharts = ({ stats }) => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6 }}
-        className="p-4 border rounded-xl shadow-lg bg-white"
+        className="p-4 border rounded-xl shadow bg-white"
       >
         <h3 className="font-semibold mb-2">Orders Breakdown</h3>
         <ResponsiveContainer width="100%" height={250}>
@@ -101,7 +101,7 @@ const UserCharts = ({ stats }) => {
         initial={{ opacity: 0, x: -40 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6 }}
-        className="p-4 border rounded-xl shadow-lg bg-white"
+        className="p-4 border rounded-xl shadow bg-white"
       >
         <h3 className="font-semibold mb-2">Orders by Status</h3>
         <ResponsiveContainer width="100%" height={250}>
@@ -124,7 +124,7 @@ const UserCharts = ({ stats }) => {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="col-span-1 lg:col-span-2 p-4 border rounded-xl shadow-lg bg-white"
+        className="col-span-1 lg:col-span-2 p-4 border rounded-xl shadow bg-white"
       >
         <h3 className="font-semibold mb-2">Orders Over Time</h3>
         <ResponsiveContainer width="100%" height={300}>

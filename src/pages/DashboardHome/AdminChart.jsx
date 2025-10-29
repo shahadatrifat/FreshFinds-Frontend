@@ -11,7 +11,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import CountUp from "../../components/CountUp"; // your installed CountUp
+import CountUp from "../../components/CountUp"; 
 
 const AdminChart = ({ stats }) => {
   // Safe defaults
