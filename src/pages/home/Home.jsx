@@ -12,7 +12,7 @@ const Home = () => {
     return (
         <div className="bg-offwhite min-h-screen">
       <Hero />
-      <main className="container mx-auto px-4 md:px-6 space-y-12">
+      <main className="container mx-auto px-4 md:px-6 ">
         <CategoryGrid />
         <AdBanner></AdBanner>
         <FeaturedGrid />
