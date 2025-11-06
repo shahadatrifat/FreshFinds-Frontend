@@ -22,7 +22,7 @@ const Navbar = () => {
     { to: "/products", label: "All Products" },
     { to: "/support", label: "Support" },
     { to: "/about", label: "About" },
-    !user && { to: "/signup", label: "Sign In/Sign Up" },
+    !user && { to: "/signin", label: "Sign In/Sign Up" },
   ].filter(Boolean);
 
   // Sign out logic

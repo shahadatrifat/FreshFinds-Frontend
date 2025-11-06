@@ -74,8 +74,8 @@ const Category = () => {
           className="mb-10 text-center"
         >
           <div className="inline-flex items-center justify-center gap-3 mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
-              <CategoryIcon className="w-8 h-8 text-white" />
+            <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow">
+              <CategoryIcon className="w-8 h-8 text-beige" />
             </div>
           </div>
           
@@ -83,7 +83,7 @@ const Category = () => {
             {prettyName}
           </h1>
           
-          <div className="flex items-center justify-center gap-2 text-gray-600">
+          <div className="flex items-center justify-center gap-2 text-charcoal">
             <Layers className="w-5 h-5" />
             <p className="text-lg">
               {isLoading ? (
@@ -100,7 +100,7 @@ const Category = () => {
           </div>
 
           {/* Category Description */}
-          <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
+          <p className="text-charcoal mt-4 max-w-2xl mx-auto">
             Discover fresh, organic {prettyName.toLowerCase()} from trusted local vendors
           </p>
         </motion.header>
@@ -111,7 +111,7 @@ const Category = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4 }}
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+            className=" gap-6"
           >
             {[...Array(8)].map((_, i) => (
               <SkeletonCardLoader key={i} />
@@ -121,7 +121,7 @@ const Category = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center py-20 bg-white rounded-2xl shadow-lg border border-red-200"
+            className="text-center py-20 bg-white rounded-2xl shadow border border-red-200"
           >
             <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <AlertCircle className="w-10 h-10 text-red-600" />
@@ -143,7 +143,7 @@ const Category = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center py-20 bg-white rounded-2xl shadow-lg border-2 border-dashed border-emerald-200"
+            className="text-center py-20 bg-white rounded-2xl shadow border-2 border-dashed border-emerald-200"
           >
             <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <ShoppingBag className="w-10 h-10 text-emerald-600" />

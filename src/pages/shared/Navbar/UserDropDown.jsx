@@ -194,7 +194,7 @@ const UserDropdown = ({ handleSignout }) => {
           <div className="p-2">
             <DropdownMenuItem asChild>
               <Link
-                to="/signup"
+                to="/signin"
                 className="px-4 py-3 flex items-center gap-3 text-beige hover:!bg-white/10 focus:!bg-white/10 rounded-lg transition-all duration-200 cursor-pointer group"
               >
                 <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center group-hover:bg-white/20 transition-colors">
